@@ -1,5 +1,6 @@
 # gravity (incomplete)
 Active from 17 April 2018 to 6 Aug 2020
+- Latest version: [v0.6.4](https://github.com/AoMedium/gravity/tree/main/versions/gravity%20v0.6.4)
 ## Description
 A simulation for gravity bodies and systems
 
