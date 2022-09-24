@@ -50,7 +50,7 @@ A simulation for gravity bodies and systems
 - Spawn at position [mouse down]
 - Cancel [esc]
 - Toggle spawn roid on click [i]
-- Toggle orbit target [o]
+- Toggle orbit target [o] (spawnmode 0 only)
 
 
 ## Commands
@@ -87,7 +87,7 @@ A simulation for gravity bodies and systems
   - offsetstep.step [value]
   - trailwidth [value]
   - trailsamples [value]
-  - trailmode [0/1]
+  - trailmode [0: relative to world / 1: relative to target]
   - trailcalcmode [0: distance / 1: angle / 2: distance amd angle]
   - spawnmode [0/1]
   - radiusconst [value]
