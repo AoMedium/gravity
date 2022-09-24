@@ -17,16 +17,41 @@ A simulation for gravity bodies and systems
 - Comet trails (dust and gas)
 - Screen culling (for performance)
 
-### Controls
-- Camera movement (arrow keys)
-- Camera zoom (+/-)
-- Time step
-- Object targetting
-
 ### Simulation manipulation
 - Manual spawning of objects
 - Slingshot object spawning
 - Command line for changing sim options
+- User spawning (with auto-orbit)
+
+## Controls
+### Camera
+- Camera movement [arrow keys]
+- Camera zoom [+/-]
+- Zoom multiplier [9: decrease / 0: increase]
+- Reset position [l]
+### Time
+- Time step [</>]
+- Toggle Pause/Play [/]
+- Reset time step to x1 [m]
+### Targetting
+- Select target [r: previous / y: next]
+- Toggle targeting [t]
+- Toggle target mode [e]
+- Toggle target largest [u]
+
+### Prediction
+- Predict using other bodies [5]
+
+### Object manipulation (only when targeting)
+- Change direction [arrow keys]
+- Increase velocity [']
+- Decrease velocity [;]
+## Spawning
+- Spawn at position [mouse down]
+- Cancel [esc]
+- Toggle spawn roid on click [i]
+- Toggle orbit target [o]
+
 
 ## Commands
 - system
