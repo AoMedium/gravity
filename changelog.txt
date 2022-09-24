@@ -1,0 +1,322 @@
+https://www.astronomynotes.com/starsun/s8.htm
+https://en.wikipedia.org/wiki/Stellar_classification
+
+
+
+- implemented stepping fps
+
+- changed separation, acceleration due to gravity and velocity calculations to individual functions
+- changed parameter orientation for coordinates and mass
+
+
+
+- debug: trail node doubling up causing jagged edges
+
+
+
+- improved prediction trail efficiency
+
+- implemented Roche limit
+
+- removed redundancy between createNewOrbit and calcOrbit
+
+- debug: index 0 of trail (currently not rendered) is not in correct position (relative mode)
+- debug: pausing when controlling craft shifts planets backward
+- debug: ptr not set at 0,0 at startup
+- debug: orbital roid not spawning exactly at cursor when not targeting orbit center
+
+v0.6.4
+- implemented randomly generated systems (seedless)
+
+- added roid set mass with string instead of index
+- added display set fontsize for textFonts 1,2 and 3
+- added radiusConst and set radiusconst
+- added set trailsamples
+- added space background for depth
+
+- tweaked dust body rendering when night mode is off
+
+v0.6.3
+- added craft collision
+- added fixed radius rendering for stars
+
+- attempted to implement system compiling
+
+v0.6.2
+- implemented user spawning roids with velocity including path prediction
+
+- tweaked comet tails to be proportional to the comet radius
+- tweaked roid spawning booleans: assigned to keys
+
+v0.6.1
+- added comets with dynamic dust and gas tails
+- added ability to assign surface and atmosphere colours seperately
+
+- changed typeOfEntity array into two separate arrays to accommodate for both type mass detection and type spawning
+
+- improved view scale scaling to a visually constant scale rate by changing view scale through multiplication and division
+- improved appearance of negative matter
+
+- removed drawAura function
+- removed drawOuterGradient function (merged with drawInnerGradient to form drawGradient)
+- removed the need to append "rgba(" in front of alpha colours
+
+v0.6.0
+- implemented stellar-based shading on planets using linear gradient
+
+- improved atmosphere realism of planets
+
+v0.5.2
+- implemented temperature, albedo and luminosity (still need to tweak constants)
+
+- added spawning of multiple spacecraft
+- added spacecraft targetting
+- added stellar classification colours
+- added gradient auras to stars and star inner gradient shading for more realistic appearance
+
+- renamed spawnAtClick with spawnRoidAtClick
+
+- debug: planets coloured with an outline with trail colour -- defaulted color to "rgba(255,255,255"
+- debug: trying to delete non existing entities deletes existing entities -- condition based on searchFor returns
+
+v0.5.1
+- added spacecraft object controllable with WASD
+- added searchForCraft function
+
+- renamed searchFor to searchForEntity
+
+- removed spaces between type names
+
+- debug: controls freezing when paused and path prediction is on -- updateTargetPrediction lacking i argument
+
+
+v0.5.0
+- implemented basic controlling of entities
+- implemented relative targeting trails to visualise predicted orbit relative to target (half guess and check)
+
+- added drawBody and traceDetail functions to tidy entity drawing and allow for custom drawing dependent on type and properties
+
+- changed zoom view scale control from ;/' back to +/-
+
+- tweaked to allow path predictions to update when paused
+- tweaked to only allow path predictions to update when timeStep = 1x (improves energy usage)
+- tweaked controls to change proportionally to existing velocities
+- tweaked tag spacing
+- tweaked so relative targeting trails only calculate predicted orbit using target attraction/mass (uninfluenced by larger masses e.g: Sol
+
+- removed +-midX/Y from createNew to alleviate confusion
+- removed StepVariable object
+- removed stepped variable architecture
+
+v0.4.7
+- implemented prediction trails recursively (based on current entity positions); energy intensive (4)
+
+- added collision mode 1: elastic collisions (WIP); requires normal contact force calculations
+- added radiusColoring and showTargetCursor toggle variables
+- added preset display modes
+
+- tweaked trail nodes to alternate in size
+- tweaked target cursor to same orientation as pointer cursor
+
+- renamed Sol Beta Major/Minor to Sol Beta A/B
+- renamed ptrX/Y variables to midX/Y; renamed originX/Y variables to ptrX/Y
+
+- debug: index 0 of trail (currently not rendered) is not in correct position, something to do with window width -- used switch statement to set initial contents of this.lastPos to [this.x, this.y] for trail mode 0 rather than [this.x - originX, this.y - originY] regardless of trail mode
+
+v0.4.6
+- optimised orbit trails to be based on angle difference alone
+
+- added orbit trails based on both angle and minimum distance
+- added isInRender function in Entity object to reduce redundancy
+- added renderCulling toggle variable (render culling offers negligible improvement)
+- added commands to set targeted entity mass, dx, dy and delete
+
+- tweaked so trail culling only affects entities within render space
+- tweaked so trails of target are rendered even if entities are out of render space
+- tweaked gui text to a smaller size
+
+- debug: trail nodes 10.666666666 -- needed to optimise when theta < -90; may be substituted with better trigonometric calculations
+- debug: entities spawned in at pause not rendering; 0.4.2 onward; not culling, not spawnroid -- removed redundant isPaused conditional inside this.update(); assigned this.radius to default value to prevent undefined
+
+v0.4.5
+- implemented minimum radius required for render
+
+- added searchFor function to generalise searching for entity by id
+- added larger command history
+- added ptrs to highlight targeted entities
+- changed offset step to be based on viewscale
+
+- loading new system now resets timestep
+
+- fixed trails clearing when going off target in trail mode 0
+- debug: roid not spawning at mouse pos when not targeting but selected target -- changed originX to target.x
+
+- removed info entity mode/hide and replaced with info mode/hide
+
+v0.4.4
+- implemented relative orbit trail mode (through guess and check rather than logical thinking..)
+
+- added trail modes (relative to plane and object)
+
+v0.4.3
+- implemented true orbit trails using position and lineTo, pushed based on difference in distance (2.2)
+
+- optimised orbit trails to be based on viewscale
+
+- attempted to implement trail resolution culling such that entities outside screen are not affected by distance/viewscale
+
+v0.4.2
+- implemented coloured names based on trail colour
+
+- added translucent text outline
+
+- replaced luminance with scattering variable
+- replaced setval command with set
+
+- debug: entities spawned in at pause not rendering; 0.3.3 onward; not culling, not spawnroid -- move updateRadiusMass outside of !isPaused conditional
+
+v0.4.1
+- implemented toggle architecture for consistency
+- implemented luminance for drawAura
+
+- added system command to combine load command
+- added toggle command to combine ui, castorbits and nightmode
+- added drawAura to create aura gradient
+
+- tweaked nightmode off auras to fill instead of stroke
+
+- removed roidmass step variable
+
+
+v0.4.0
+- implemented command system to replace keybind system
+- added load, setval, goto, toggleui, info, togglecastorbits, timestep and togglenightmode commands
+
+- tweaked pointer shape
+- tweaked culling to account for radius
+
+- changed info mode indexes
+
+- removed HTML GUI buttons
+
+
+
+v0.3.3
+- implemented draw culling for outside of window dimensions
+- implemented orbit target
+- finding high intensity variables: not mass, not name/info, partially ui/html (2), clearing canvas (2.2), 
+
+- changed momentum to correct calculation
+
+
+v0.3.2
+- implemented PrimaryObject to allow tidier addition of objects to systems
+
+- overhauled drawing entity types into separate entity variables
+
+- tweaked drawing by separating outline and aura into functions
+- tweaked type density relative to solar system values
+- tweaked sol mass to realistic values
+
+- categorised code using braces
+
+
+v0.3.1
+- implemented individual colour assignment
+
+- added moons to sol_alpha
+- added system relative G constant
+
+- tweaked to allow spawning roids in one spot without affecting velocity
+
+- changed sol_alpha quantities to more realistic values and to stabilise orbits (AU)
+- changed radius calculations to volume rather than area
+
+- removed vScale variable
+- removed collision contact variable
+
+
+v0.3.0
+- implemented night mode: name outlines, inverted shades
+- implemented secondary (satellite) orbits
+
+- added coloured orbits
+
+- tweaked margin colour to be brighter
+
+
+v0.2.2
+- added hiding of ui
+- added planet align angle
+
+- revamped keybinds for more efficiency using StepVariable Object
+
+- tweaked nametags to outside of radius
+
+- removed html mass buttons
+- removed time stamps
+
+- attempted orbital tracking via canvas
+
+v0.2.1
+- implemented time stamps
+
+
+
+
+
+
+v0.0.4
+- added gui text for zoom scale, zoom step and entities
+- added fps for forced frames animation
+- added support for html button option toggling
+- added cannon_system
+
+v0.0.3
+- introduced hiding names, information and trivial objects
+- introduced gui text for system name and scale
+
+- introduced simulateSystem function for hard-code system selection
+
+- introduced user roid spawning at cursor
+
+
+- added sol_alpha system
+- added cull range independent of window dimensions
+
+v0.0.2
+- introduced crosshair
+- introduced view scaling
+- introduced panning/changing origin position
+
+- introduced object id and coordinates from origin
+- introduced object id and information display
+
+
+- added velocity scale for manageable velocity values
+
+
+- changed radius calculations in accordance to mass and area of the circle
+- changed separation and vector calculations to individual functions
+
+
+- attempted calculation for centripetal velocity
+- attempted spawning of debris
+
+v0.0.1
+- introduced point mass gravity engine
+- introduced forced frames animation
+
+- introduced randomised roid spawning
+- introduced culling of objects
+
+- introduced createNew function with fixed objects
+
+- introduced collision detection
+- introduced absorption of objects and masses
+
+
+- added collision contact variable
+- added scaling of object sizes
+- added radius calculations proportional to mass
+- added separation, acceleration due to gravity and velocity calculations

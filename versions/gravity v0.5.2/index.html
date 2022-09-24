@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Gravity</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    	<div id="cmdContainer">
+    		<div id="cmdResult">></div>
+    		<input id="cmdBox" contenteditable="true" onfocus="toggleKeyInput(true)" onfocusout="toggleKeyInput(false)"></input>
+    		<div id="cmdEnterBtn" onclick="cmdEnter();toggleKeyInput(false)">></div>
+
+    	</div>
+    	<div id="margin">gravity v0.5 (Jan 2020) by O1_</div> 
+
+
+
+       	<canvas></canvas>
+        <script src="input.js"></script>
+        <script src="systems.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
