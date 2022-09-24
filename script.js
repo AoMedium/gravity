@@ -1,7 +1,18 @@
 var canvas = document.querySelector("canvas");
 var c = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
+// fix blurry canvas rendering
+// https://www.kirupa.com/canvas/canvas_high_dpi_retina.htm
+var canvasScale = window.devicePixelRatio;
+canvas.width = window.innerWidth * canvasScale;
+canvas.height = window.innerHeight * canvasScale;
+
+// ensure all drawing operations are scaled
+c.scale(devicePixelRatio, devicePixelRatio);
+
+// scale back down to window dimensions
+canvas.style.width = window.innerWidth + 'px';
+canvas.style.height = window.innerHeight + 'px';
 
 //document.addEventListener('contextmenu', event => event.preventDefault());
 
