@@ -28,6 +28,79 @@ A simulation for gravity bodies and systems
 - Slingshot object spawning
 - Command line for changing sim options
 
+## Commands
+- system
+  - load [system]
+  - generate [system radius] [entity count] ?[g value] ?[mass threshold]
+  - save
+  - compile [system representation]
+  - entity
+    - set
+      - mass [value]
+      - dx [value]
+      - dy [value]
+    - delete (on selected target)
+  - set
+    - g [value]
+    - entitycap [value]
+    - spawnrange [value]
+    - cullrange [value]
+    - typescale [value]
+    - collisionmode [0: none / 1: absorb / 2: distributive]
+    
+- roid
+  - set
+    - mass [value]
+    - type/disguise [type]
+  - toggle
+    - override
+    
+- set
+  - viewscale [value]
+  - viewscale.step [value]
+  - offsetstep [value]
+  - offsetstep.step [value]
+  - trailwidth [value]
+  - trailsamples [value]
+  - trailmode [0/1]
+  - trailcalcmode [0: distance / 1: angle / 2: distance amd angle]
+  - spawnmode [0/1]
+  - radiusconst [value]
+  
+- goto
+  - entity [id]
+  - position (not implemented)
+
+- toggle
+  - ui
+  - targetcursor
+  - radiuscoloring
+  - clear
+  - trails
+  - trailnodes
+  - predictpath
+  - nightmode
+  - trivial (true: show trivial entities)
+  - renderculling
+  - pause
+  - shading
+  - fadeatmosphere
+  - usebackground
+  
+- info
+  - mode [0/1/2/3]
+  - hide (hides UI)
+  
+- display
+  - fontsize [text type] [size]
+  - mode
+    - natural
+    - minimal
+    
+- timestep
+  - set [value]
+  - overridemax [value]
+
 ## Changes
 - See the [changelog](changelog.txt)
 
