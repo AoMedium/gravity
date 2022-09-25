@@ -1,8 +1,7 @@
-type EntityAttributes = {
-    fixed: boolean;
-}
+import * as Utils from './utils.js';
+import { c } from './index.js';
 
-class Vector2 {
+export class Vector2 {
     public x: number;
     public y: number;
 
@@ -44,7 +43,7 @@ class Vector2 {
     }
 }
 
-abstract class Entity {
+export abstract class Entity {
     private readonly id: number;
     private pos: Vector2;
     private vel: Vector2;
@@ -78,26 +77,23 @@ abstract class Entity {
     }
 }
 
-class GravityObject extends Entity {
+export class GravityObject extends Entity {
     private mass: number;
-    private attributes: EntityAttributes;
+    //private attributes: EntityAttributes;
 
     private radius: number;
 
-    constructor(id: number, mass: number, pos: Vector2, vel: Vector2,
-        attributes: EntityAttributes = { 
-            fixed: false
-        }) 
+    constructor(id: number, mass: number, pos: Vector2, vel: Vector2) 
     {
         super(id, pos, vel);
         this.mass = mass;
-        this.attributes = attributes;
+        //this.attributes = attributes;
     }
 
     public update(entities: Entity[]): void {
-        if (!this.attributes.fixed) {
+        //if (!this.attributes.fixed) {
 			this.setPos(this.getPos().add(this.getVel()));
-		}
+		//}
         this.gravitate(entities);
         this.updateRadiusByMass();
 
@@ -126,7 +122,7 @@ class GravityObject extends Entity {
                 return;
             }
 
-            let a = Utility.calculateAcceleration(this.getPos().subtract(entity.getPos()), (entity as GravityObject).getMass());
+            let a = Utils.Calculations.calculateAcceleration(this.getPos().subtract(entity.getPos()), (entity as GravityObject).getMass());
             this.setVel(this.getVel().add(a));
         })
     }

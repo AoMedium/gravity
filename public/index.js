@@ -1,9 +1,12 @@
-var canvas = document.querySelector("canvas");
-var c = canvas.getContext('2d');
+import { Vector2, GravityObject } from "./models.js";
+import { SystemBuilder } from "./utils.js";
+import { Game } from "./game.js";
+export const canvas = document.querySelector("canvas");
+export const c = canvas.getContext('2d');
 function initCanvas() {
     // fix blurry canvas rendering
     // https://www.kirupa.com/canvas/canvas_high_dpi_retina.htm
-    var canvasScale = window.devicePixelRatio;
+    let canvasScale = window.devicePixelRatio;
     canvas.width = window.innerWidth * canvasScale;
     canvas.height = window.innerHeight * canvasScale;
     // ensure all drawing operations are scaled
@@ -18,18 +21,18 @@ function main() {
     Game.start();
 }
 function initGame() {
-    var entities = [];
-    var nextId = 0;
+    let entities = [];
+    let nextId = 0;
+    let s = SystemBuilder.createSystem("Sol Alpha");
     entities.push(new GravityObject(nextId, 100, new Vector2(innerWidth / 2, innerHeight / 2), new Vector2(-1, 0)));
     nextId++;
     entities.push(new GravityObject(nextId, 5000, new Vector2(innerWidth / 3, innerHeight / 3), new Vector2(0, 0)));
-    Game.render = function () {
-        entities.forEach(function (entity) {
+    Game.render = () => {
+        entities.forEach((entity) => {
             entity.update(entities);
-            //console.log(entity.getVel());
         });
     };
-    Game.clear = function () {
+    Game.clear = () => {
         c.clearRect(0, 0, innerWidth, innerHeight);
     };
     Game.setFPS(30);

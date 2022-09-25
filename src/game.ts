@@ -1,4 +1,4 @@
-class Game {
+export class Game {
     private static useForceFrames: boolean = false;
     private static fps: number = 15; // default fps
     private static tick: number = 0;

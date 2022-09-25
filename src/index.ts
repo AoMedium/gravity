@@ -1,5 +1,10 @@
-const canvas = document.querySelector("canvas");
-const c = canvas.getContext('2d');
+import { Vector2, Entity, GravityObject } from "./models.js"
+import { SystemBuilder } from "./utils.js"
+import { Game } from "./game.js"
+
+export const canvas = document.querySelector("canvas");
+export const c = canvas.getContext('2d');
+
 function initCanvas() {
     // fix blurry canvas rendering
     // https://www.kirupa.com/canvas/canvas_high_dpi_retina.htm
@@ -27,6 +32,8 @@ function initGame() {
     let entities: Entity[] = [];
     let nextId = 0;
 
+    let s = SystemBuilder.createSystem("Sol Alpha");
+
     entities.push(new GravityObject(nextId, 100, new Vector2(innerWidth/2, innerHeight/2), new Vector2(-1,0)));
     nextId++;
     entities.push(new GravityObject(nextId, 5000, new Vector2(innerWidth/3, innerHeight/3), new Vector2(0,0)));
@@ -34,7 +41,6 @@ function initGame() {
     Game.render = () => {
         entities.forEach((entity: Entity) => {
             entity.update(entities);
-            //console.log(entity.getVel());
         })
     }
 
