@@ -18,15 +18,22 @@ function main() {
     Game.start();
 }
 function initGame() {
+    var entities = [];
+    var nextId = 0;
+    entities.push(new GravityObject(nextId, 100, new Vector2(innerWidth / 2, innerHeight / 2), new Vector2(-1, 0)));
+    nextId++;
+    entities.push(new GravityObject(nextId, 5000, new Vector2(innerWidth / 3, innerHeight / 3), new Vector2(0, 0)));
     Game.render = function () {
-        c.beginPath();
-        c.arc(Game.getTick(), Game.getTick(), 5, 0, 2 * Math.PI);
-        c.fill();
-        c.closePath;
+        entities.forEach(function (entity) {
+            entity.update(entities);
+            //console.log(entity.getVel());
+        });
     };
     Game.clear = function () {
         c.clearRect(0, 0, innerWidth, innerHeight);
     };
+    Game.setFPS(30);
+    Game.start();
 }
 main();
 //# sourceMappingURL=index.js.map
