@@ -1,0 +1,127 @@
+body {
+	margin: 0 auto;
+	font-family: Helvetica;
+
+	background-color: #fff;
+	user-select: none;
+}
+
+canvas {
+	z-index: 1;
+    position: absolute;
+}
+
+#background {
+	width: 100%;
+	height: 100%;
+	opacity: 50%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: -10;
+}
+
+.button {
+	z-index: 10;
+	display: block;
+	margin-bottom: 5px;
+	padding: 10px 15px;
+	opacity: 0.8;
+
+	background-color: #ddd;
+	border: 1.5px #ddd solid;
+
+	text-align: center;
+	font-size: 10px;
+	letter-spacing: 1.5px;
+	color: #555;
+
+	transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.button:hover {
+	background: #eee;
+	color: #0a0;
+	border-color: #0a0;
+	cursor: url(cursor.cur), auto;
+}
+.buttom:active {
+}
+
+#cmdContainer {
+	z-index: 10;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+
+	font-family: Courier New;
+	font-size: 14px;
+}
+
+#cmdBox {
+	
+	display: inline-block;
+	width: 30vw;
+	padding: 5px 10px;
+
+	background-color: rgba(50,50,50,0);
+	border: none;
+
+	font-family: Courier New;
+	font-size: 14px;
+	color: rgba(250,250,250,0);
+
+	transition: background-color 0.2s, color 0.2s;
+}
+#cmdBox:hover {
+	background-color: rgba(50,50,50,0.5);
+	color: rgba(250,250,250,0.5);
+}
+#cmdBox:focus {
+	background-color: rgba(50,50,50,1);
+	color: rgba(250,250,250,1);
+	outline: none;
+}
+
+
+#cmdEnterBtn {
+	display: inline-block;
+	padding: 5px;
+
+	color: rgba(200,200,200,0);
+	background-color: rgba(50,50,50,0);
+	transition: background-color 0.2s, color 0.2s;
+}
+#cmdEnterBtn:hover {
+	background-color: rgba(50,50,50,1);
+	color: rgba(200,200,200,1);
+	outline: none;
+}
+
+
+
+#cmdResult {
+	display: block;
+	padding: 5px;
+	margin-bottom: 10px;
+
+	background-color: rgba(50,50,50,0);
+	color: rgba(255,255,255,0);
+
+	transition: background-color 0.2s, color 0.2s;
+}
+#cmdResult:hover {
+	background-color: rgba(50,50,50,0.5);
+	color: rgba(255,255,255,1);
+}
+
+
+#margin {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+
+	font-size: 13px;
+	color: #999;
+	letter-spacing: 1.5px;
+	font-variant-caps: all-small-caps;
+}
