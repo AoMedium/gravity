@@ -44,10 +44,10 @@ export class Vector2 {
     }
 }
 
-interface EntityArgs {
-    id: number;
+export interface EntityArgs {
+    id?: number;
     pos: Vector2;
-    vel: Vector2;
+    vel?: Vector2;
 }
 
 export abstract class Entity {
@@ -55,16 +55,10 @@ export abstract class Entity {
     private pos: Vector2;
     private vel: Vector2;
 
-    public static readonly defaultArgs: EntityArgs = {
-        id: Game.getTick(), 
-        pos: Vector2.zero(), 
-        vel: Vector2.zero()
-    };
-
     constructor(args: EntityArgs) {
-        this.id = args.id || Entity.defaultArgs.id;
-        this.pos = args.pos || Entity.defaultArgs.pos;
-        this.vel = args.vel || Entity.defaultArgs.vel;
+        this.id = args.id || Game.getTick();
+        this.pos = args.pos || Vector2.zero();
+        this.vel = args.vel || Vector2.zero();
     }
 
     public abstract update(entities: Entity[]): void;
@@ -90,13 +84,7 @@ export abstract class Entity {
     }
 }
 
-interface EntityArgs {
-    id: number;
-    pos: Vector2;
-    vel: Vector2;
-}
-
-interface GravityObjectArgs extends EntityArgs {
+export type GravityObjectArgs = EntityArgs & {
     mass: number;
 }
 
@@ -106,14 +94,9 @@ export class GravityObject extends Entity {
 
     private radius: number;
 
-    public static readonly defaultArgs: GravityObjectArgs = {
-        ...Entity.defaultArgs,
-        mass: 1
-    };
-
     constructor(args: GravityObjectArgs) {
         super(args);
-        this.mass = args.mass || GravityObject.defaultArgs.mass;
+        this.mass = args.mass;
         //this.attributes = attributes;
     }
 
