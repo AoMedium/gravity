@@ -3,7 +3,7 @@
         "target": "es6",
         "module": "es2015",
         "sourceMap": true,
-        "outDir": "./public",
+        "outDir": "out",
         "rootDir": "./src",
         "esModuleInterop": true,
         "resolveJsonModule": true,
