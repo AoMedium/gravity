@@ -1,5 +1,6 @@
 import * as Utils from './utils.js';
 import { c } from './index.js';
+import { Game } from './game.js';
 
 export class Vector2 {
     public x: number;
@@ -43,15 +44,27 @@ export class Vector2 {
     }
 }
 
+interface EntityArgs {
+    id: number;
+    pos: Vector2;
+    vel: Vector2;
+}
+
 export abstract class Entity {
     private readonly id: number;
     private pos: Vector2;
     private vel: Vector2;
 
-    constructor(id: number, pos: Vector2, vel: Vector2) {
-        this.id = id;
-        this.pos = pos;
-        this.vel = vel;
+    public static readonly defaultArgs: EntityArgs = {
+        id: Game.getTick(), 
+        pos: Vector2.zero(), 
+        vel: Vector2.zero()
+    };
+
+    constructor(args: EntityArgs) {
+        this.id = args.id || Entity.defaultArgs.id;
+        this.pos = args.pos || Entity.defaultArgs.pos;
+        this.vel = args.vel || Entity.defaultArgs.vel;
     }
 
     public abstract update(entities: Entity[]): void;
@@ -77,16 +90,30 @@ export abstract class Entity {
     }
 }
 
+interface EntityArgs {
+    id: number;
+    pos: Vector2;
+    vel: Vector2;
+}
+
+interface GravityObjectArgs extends EntityArgs {
+    mass: number;
+}
+
 export class GravityObject extends Entity {
     private mass: number;
     //private attributes: EntityAttributes;
 
     private radius: number;
 
-    constructor(id: number, mass: number, pos: Vector2, vel: Vector2) 
-    {
-        super(id, pos, vel);
-        this.mass = mass;
+    public static readonly defaultArgs: GravityObjectArgs = {
+        ...Entity.defaultArgs,
+        mass: 1
+    };
+
+    constructor(args: GravityObjectArgs) {
+        super(args);
+        this.mass = args.mass || GravityObject.defaultArgs.mass;
         //this.attributes = attributes;
     }
 
