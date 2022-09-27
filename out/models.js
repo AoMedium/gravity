@@ -5,14 +5,26 @@ export class Vector2 {
         this.x = x || 0;
         this.y = y || 0;
     }
+    static add(v1, v2) {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
+    }
     add(v) {
-        return new Vector2(this.x + v.x, this.y + v.y);
+        this.x += v.x;
+        this.y += v.y;
+    }
+    static subtract(v1, v2) {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
     }
     subtract(v) {
-        return new Vector2(this.x - v.x, this.y - v.y);
+        this.x -= v.x;
+        this.y -= v.y;
+    }
+    static scale(v, scalar) {
+        return new Vector2(v.x * scalar, v.y * scalar);
     }
     scale(scalar) {
-        return new Vector2(this.x * scalar, this.y * scalar);
+        this.x *= scalar;
+        this.y *= scalar;
     }
     equals(v) {
         return this.x == v.x && this.y == v.y;
@@ -47,7 +59,7 @@ export class Entity {
         this._vel = args.vel || Vector2.zero();
     }
     update(entities) { }
-    render() { }
+    render(controller) { }
     ;
     get id() {
         return this._id;
@@ -103,22 +115,33 @@ export class System {
 export class GravityObject extends Entity {
     constructor(args) {
         super(args);
+        this.tagOffset = new Vector2(6, 10);
         this._mass = args.mass;
         this.attributes = args.attributes;
     }
     update(entities) {
         //if (!this.attributes.fixed) {
-        this.pos = this.pos.add(this.vel);
+        this.pos.add(this.vel);
         //}
         this.gravitate(entities);
         this.updateRadiusByMass();
-        this.render();
     }
-    render() {
-        const scale = 0.01;
+    render(controller) {
+        let camera = controller.getActiveCamera();
+        let scale = camera.scale;
+        let renderPos = Utils.Calculations.calculateRenderPos(this.pos, camera);
+        c.fillStyle = this.attributes.primaryColor;
         c.beginPath();
-        c.arc(innerWidth / 2 + this.pos.x * scale, innerHeight / 2 + this.pos.y * scale, this._radius, 0, 2 * Math.PI);
+        c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
         c.fill();
+        c.closePath();
+        c.strokeStyle = "rgba(0,0,0,0.5)";
+        c.fillStyle = this.attributes.primaryColor; // Text color
+        c.lineWidth = 3;
+        c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+        c.lineWidth = 1;
+        c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+        c.fillText("<TYPE>" + " / " + Math.round(this.mass), renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
         c.closePath();
     }
     updateRadiusByMass() {
@@ -135,8 +158,8 @@ export class GravityObject extends Entity {
             if (!(entity instanceof GravityObject) || this.id == entity.id) {
                 return;
             }
-            let a = Utils.Calculations.calculateAcceleration(this.pos.subtract(entity.pos), entity.mass);
-            this.vel = this.vel.add(a);
+            let a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos, entity.pos), entity.mass);
+            this.vel.add(a);
         });
     }
     get mass() {

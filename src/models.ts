@@ -1,6 +1,7 @@
 import * as Utils from './utils.js';
 import { c } from './index.js';
 import { Game } from './game.js';
+import { PlayerController } from './input.js';
 
 export class Vector2 {
     public x: number;
@@ -11,16 +12,31 @@ export class Vector2 {
         this.y = y || 0;
     }
 
-    public add(v: Vector2): Vector2 {
-        return new Vector2(this.x + v.x, this.y + v.y);
+    public static add(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x + v2.x, v1.y + v2.y);
     }
 
-    public subtract(v: Vector2): Vector2 {
-        return new Vector2(this.x - v.x, this.y - v.y);
+    public add(v: Vector2) {
+        this.x += v.x;
+        this.y += v.y;
     }
 
-    public scale(scalar: number): Vector2 {
-        return new Vector2(this.x * scalar, this.y * scalar);
+    public static subtract(v1: Vector2, v2: Vector2) {
+        return new Vector2(v1.x - v2.x, v1.y - v2.y);
+    }
+
+    public subtract(v: Vector2) {
+        this.x -= v.x;
+        this.y -= v.y;
+    }
+
+    public static scale(v: Vector2, scalar: number): Vector2 {
+        return new Vector2(v.x * scalar, v.y * scalar);
+    }
+
+    public scale(scalar: number) {
+        this.x *= scalar;
+        this.y *= scalar;
     }
 
     public equals(v: Vector2): boolean {
@@ -78,7 +94,7 @@ export abstract class Entity {
 
     public update(entities: Entity[]): void {}
 
-    protected render(): void {};
+    public render(controller: PlayerController): void {};
 
     get id() {
         return this._id;
@@ -160,6 +176,8 @@ export class GravityObject extends Entity {
 
     private _radius: number;
 
+    private readonly tagOffset: Vector2 = new Vector2(6, 10);
+
     constructor(args: GravityObjectArgs) {
         super(args);
         this._mass = args.mass;
@@ -168,19 +186,36 @@ export class GravityObject extends Entity {
 
     public update(entities: Entity[]): void {
         //if (!this.attributes.fixed) {
-			this.pos = this.pos.add(this.vel);
+			this.pos.add(this.vel);
 		//}
         this.gravitate(entities);
         this.updateRadiusByMass();
-
-        this.render();
     }
 
-    protected render(): void {
-        const scale = 0.01;
+    public render(controller: PlayerController): void {
+        let camera = controller.getActiveCamera();
+        let scale = camera.scale;
+
+        let renderPos: Vector2 = Utils.Calculations.calculateRenderPos(this.pos, camera);
+
+        c.fillStyle = this.attributes.primaryColor;
         c.beginPath();
-        c.arc(innerWidth/2 + this.pos.x * scale, innerHeight/2 + this.pos.y * scale, this._radius, 0, 2 * Math.PI);
+        c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
         c.fill();
+        c.closePath();
+
+        c.strokeStyle = "rgba(0,0,0,0.5)";
+        c.fillStyle = this.attributes.primaryColor; // Text color
+        c.lineWidth = 3;
+        c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+        c.lineWidth = 1;
+        c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+        
+
+        
+        c.fillText("<TYPE>" + " / " + Math.round(this.mass), 
+            renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
+
         c.closePath();
     }
 
@@ -199,8 +234,8 @@ export class GravityObject extends Entity {
                 return;
             }
 
-            let a = Utils.Calculations.calculateAcceleration(this.pos.subtract(entity.pos), (entity as GravityObject).mass);
-            this.vel = this.vel.add(a);
+            let a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos,entity.pos), (entity as GravityObject).mass);
+            this.vel.add(a);
         })
     }
 

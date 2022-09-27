@@ -1,15 +1,20 @@
 //import systemJson from './json/systems.json';
 import { Vector2, System, GravityObject, EntityAttributes, } from './models.js';
 const NON_ZERO_FACTOR = 0.00001;
-const G = 0.1;
+const G = 0.0001;
 export class Calculations {
+    static calculateRenderPos(pos, camera) {
+        let renderPos = Vector2.scale(Vector2.subtract(pos, camera.pos), camera.scale);
+        renderPos.add(new Vector2(innerWidth / 2, innerHeight / 2));
+        return renderPos;
+    }
     static calculateAcceleration(displacement, mass) {
         let direction = displacement.normalized();
         if (displacement.equals(Vector2.zero())) {
             displacement.add(new Vector2(NON_ZERO_FACTOR, NON_ZERO_FACTOR));
         }
         let aMagnitude = -G * mass / (displacement.magnitude() * displacement.magnitude());
-        return direction.scale(aMagnitude);
+        return Vector2.scale(direction, aMagnitude);
     }
     static calculateOrbitPosition(system, parentName, satellite) {
         console.log("Sat");
@@ -21,7 +26,7 @@ export class Calculations {
         let parent = system.systemObjects.find(obj => obj.name == parentName);
         pos.x = Math.round(satellite.attributes.distance * Math.cos(angle) + parent.pos.x);
         pos.y = Math.round(satellite.attributes.distance * Math.sin(angle) + parent.pos.y);
-        let separation = parent.pos.subtract(pos).magnitude();
+        let separation = Vector2.subtract(parent.pos, pos).magnitude();
         let vScalar = Math.sqrt(G * parent.mass / separation);
         if (isClockwise) {
             // Use 0 - - - 0 + + + graphing method to determine signs

@@ -7,10 +7,11 @@ import {
     GravityObjectArgs,
     EntityAttributes,
 } from './models.js';
+import { Camera } from './input.js';
 import { Game } from './game.js';
 
 const NON_ZERO_FACTOR = 0.00001;
-const G = 0.1;
+const G = 0.0001;
 
 export type OrbitParams = {
     pos: Vector2,
@@ -18,6 +19,14 @@ export type OrbitParams = {
 }
 
 export class Calculations {
+
+    public static calculateRenderPos(pos: Vector2, camera: Camera): Vector2 {
+        let renderPos = Vector2.scale(Vector2.subtract(pos, camera.pos), camera.scale)
+        renderPos.add(new Vector2(innerWidth/2, innerHeight/2));
+
+        return renderPos;
+    }
+
     public static calculateAcceleration(displacement: Vector2, mass: number): Vector2 {
         let direction: Vector2 = displacement.normalized();
         if (displacement.equals(Vector2.zero())) {
@@ -26,7 +35,7 @@ export class Calculations {
         
         let aMagnitude: number = -G * mass / (displacement.magnitude() * displacement.magnitude());
     
-        return direction.scale(aMagnitude);
+        return Vector2.scale(direction, aMagnitude);
     }
 
     public static calculateOrbitPosition(system: System, parentName: string, satellite: GravityObject): OrbitParams {
@@ -45,7 +54,7 @@ export class Calculations {
         pos.y = Math.round(satellite.attributes.distance * Math.sin(angle) + parent.pos.y);
 
 
-        let separation: number = parent.pos.subtract(pos).magnitude();
+        let separation: number = Vector2.subtract(parent.pos, pos).magnitude();
         let vScalar = Math.sqrt(G * parent.mass / separation);
 
         if (isClockwise) {

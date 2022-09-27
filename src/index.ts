@@ -1,9 +1,25 @@
 import { Vector2, Entity, GravityObject } from "./models.js"
 import { SystemBuilder } from "./utils.js"
 import { Game } from "./game.js"
+import { Camera, PlayerController } from "./input.js";
 
 export const canvas = document.querySelector("canvas");
 export const c = canvas.getContext('2d');
+
+
+
+
+function main() {
+    initCanvas();
+    initGame();
+
+    Game.start();
+}
+
+
+
+
+
 
 function initCanvas() {
     // fix blurry canvas rendering
@@ -20,20 +36,17 @@ function initCanvas() {
     canvas.style.height = window.innerHeight + 'px';
 }
 
-function main() {
-    initCanvas();
-    initGame();
-
-    Game.start();
-}
-
 function initGame() {
 
     let system = SystemBuilder.createSystem("Sol Alpha");
 
+    let mainCamera: Camera = new Camera();
+    let controller: PlayerController = new PlayerController(mainCamera);
+
     Game.render = () => {
         system.systemObjects.forEach((entity: Entity) => {
             entity.update(system.systemObjects);
+            entity.render(controller);
         })
     }
 
