@@ -115,6 +115,7 @@ export class GravityObject extends Entity {
     constructor(args) {
         super(args);
         this.tagOffset = new Vector2(6, 10);
+        this.minDotSize = 2;
         this._mass = args.mass;
         this.attributes = args.attributes;
     }
@@ -132,7 +133,12 @@ export class GravityObject extends Entity {
         let drawBody = () => {
             c.fillStyle = this.attributes.primaryColor;
             c.beginPath();
-            c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
+            if (this._radius * scale < this.minDotSize) {
+                c.arc(renderPos.x, renderPos.y, this.minDotSize, 0, 2 * Math.PI);
+            }
+            else {
+                c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
+            }
             c.fill();
             c.closePath();
         };
