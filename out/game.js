@@ -1,7 +1,7 @@
 export class Game {
     static start() {
-        if (this.useForceFrames) {
-            this.frameIntervalId = setInterval(Game.update, 1000 / this.fps);
+        if (this._useForceFrames) {
+            this.frameIntervalId = setInterval(Game.update, 1000 / this._fps);
         }
         else {
             window.requestAnimationFrame(Game.update);
@@ -10,22 +10,29 @@ export class Game {
     static stop() {
         clearInterval(this.frameIntervalId);
     }
+    static togglePause() {
+        Game._isPaused = !Game._isPaused;
+    }
+    static get isPaused() {
+        return Game._isPaused;
+    }
     static update() {
         Game.clear();
-        Game.render();
-        Game.tick++;
+        Game.nextFrame();
+        Game._tick++;
     }
-    static render() { }
+    static nextFrame() { }
     static clear() { }
     static getTick() {
-        return this.tick;
+        return this._tick;
     }
     static setFPS(fps) {
-        Game.useForceFrames = true;
-        Game.fps = fps;
+        Game._useForceFrames = true;
+        Game._fps = fps;
     }
 }
-Game.useForceFrames = false;
-Game.fps = 15; // default fps
-Game.tick = 0;
+Game._useForceFrames = false;
+Game._fps = 15; // default fps
+Game._tick = 0;
+Game._isPaused = false;
 //# sourceMappingURL=game.js.map

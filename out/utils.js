@@ -17,8 +17,6 @@ export class Calculations {
         return Vector2.scale(direction, aMagnitude);
     }
     static calculateOrbitPosition(system, parentName, satellite) {
-        console.log("Sat");
-        console.log(satellite);
         const isClockwise = false;
         const angle = Math.random() * 2 * Math.PI;
         let pos = new Vector2();
@@ -44,11 +42,9 @@ export class SystemBuilder {
     static deserializer(json, systemName) {
         let parsedSystems = [];
         let systemsJsonObj = JSON.parse(json).systems;
-        console.log(systemsJsonObj);
         let systemJsonObj = systemsJsonObj.find(system => system.name == systemName);
         let parsedSystem = new System(systemJsonObj);
         systemJsonObj.systemObjects.forEach(objJson => {
-            console.log(objJson);
             let attributes;
             if (objJson.attributes == undefined) {
                 attributes = new EntityAttributes();
@@ -65,7 +61,6 @@ export class SystemBuilder {
             parsedSystem.add(new GravityObject(args));
         });
         parsedSystem.calculateOrbits();
-        console.log(parsedSystem);
         return parsedSystem;
     }
     static createSystem(name) {

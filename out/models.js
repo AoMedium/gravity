@@ -106,7 +106,6 @@ export class System {
             catch (error) {
                 console.error(error);
             }
-            console.log(orbitParams);
             obj.pos = orbitParams.pos;
             obj.vel = orbitParams.vel;
         });
@@ -130,19 +129,25 @@ export class GravityObject extends Entity {
         let camera = controller.getActiveCamera();
         let scale = camera.scale;
         let renderPos = Utils.Calculations.calculateRenderPos(this.pos, camera);
-        c.fillStyle = this.attributes.primaryColor;
-        c.beginPath();
-        c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
-        c.fill();
-        c.closePath();
-        c.strokeStyle = "rgba(0,0,0,0.5)";
-        c.fillStyle = this.attributes.primaryColor; // Text color
-        c.lineWidth = 3;
-        c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
-        c.lineWidth = 1;
-        c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
-        c.fillText("<TYPE>" + " / " + Math.round(this.mass), renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
-        c.closePath();
+        let drawBody = () => {
+            c.fillStyle = this.attributes.primaryColor;
+            c.beginPath();
+            c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
+            c.fill();
+            c.closePath();
+        };
+        let drawText = () => {
+            c.strokeStyle = "#000"; // Colors.Black;
+            c.fillStyle = this.attributes.primaryColor; // Text color
+            c.lineWidth = 3;
+            c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+            c.lineWidth = 1;
+            c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+            c.fillText("<TYPE>" + " / " + Math.round(this.mass), renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
+            c.closePath();
+        };
+        drawBody();
+        drawText();
     }
     updateRadiusByMass() {
         if (this.mass < 1) {

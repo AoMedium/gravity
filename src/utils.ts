@@ -39,9 +39,6 @@ export class Calculations {
     }
 
     public static calculateOrbitPosition(system: System, parentName: string, satellite: GravityObject): OrbitParams {
-        console.log("Sat")
-        console.log(satellite);
-
         const isClockwise: boolean = false;
         const angle: number = Math.random() * 2 * Math.PI;
 
@@ -77,13 +74,11 @@ export class SystemBuilder {
         let parsedSystems: System[] = [];
         
         let systemsJsonObj: System[] = JSON.parse(json).systems;
-        console.log(systemsJsonObj);
 
         let systemJsonObj: System = systemsJsonObj.find(system => system.name == systemName)
         let parsedSystem: System = new System(systemJsonObj);
 
         systemJsonObj.systemObjects.forEach(objJson => {
-            console.log(objJson)
 
             let attributes: EntityAttributes;
 
@@ -104,7 +99,6 @@ export class SystemBuilder {
         });
 
         parsedSystem.calculateOrbits();
-        console.log(parsedSystem);
 
         return parsedSystem;
     }

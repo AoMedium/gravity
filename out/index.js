@@ -22,12 +22,14 @@ function initCanvas() {
 }
 function initGame() {
     let system = SystemBuilder.createSystem("Sol Alpha");
-    let mainCamera = new Camera();
-    let controller = new PlayerController(mainCamera);
-    Game.render = () => {
+    let controller = new PlayerController(new Camera());
+    Game.nextFrame = () => {
         system.systemObjects.forEach((entity) => {
-            entity.update(system.systemObjects);
+            if (!Game.isPaused) {
+                entity.update(system.systemObjects);
+            }
             entity.render(controller);
+            controller.getActiveCamera().update();
         });
     };
     Game.clear = () => {

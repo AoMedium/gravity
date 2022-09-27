@@ -1,13 +1,14 @@
 export class Game {
-    private static useForceFrames: boolean = false;
-    private static fps: number = 15; // default fps
-    private static tick: number = 0;
+    private static _useForceFrames: boolean = false;
+    private static _fps: number = 15; // default fps
+    private static _tick: number = 0;
+    private static _isPaused: boolean = false;
 
     private static frameIntervalId: number;
 
     public static start(): void {
-        if (this.useForceFrames) {
-            this.frameIntervalId = setInterval(Game.update, 1000/this.fps);
+        if (this._useForceFrames) {
+            this.frameIntervalId = setInterval(Game.update, 1000/this._fps);
         } else {
             window.requestAnimationFrame(Game.update);
         }
@@ -17,24 +18,32 @@ export class Game {
         clearInterval(this.frameIntervalId);
     }
 
-    private static update(): void {
-        Game.clear();
-        Game.render();
-
-        Game.tick++;
+    public static togglePause(): void {
+        Game._isPaused = !Game._isPaused;
     }
 
-    public static render(): void {}
+    static get isPaused() {
+        return Game._isPaused;
+    }
+
+    private static update(): void {
+        Game.clear();
+        Game.nextFrame();
+
+        Game._tick++;
+    }
+
+    public static nextFrame(): void {}
 
     public static clear(): void {}
 
     public static getTick(): number {
-        return this.tick;
+        return this._tick;
     }
 
     public static setFPS(fps: number) {
-        Game.useForceFrames = true;
-        Game.fps = fps;
+        Game._useForceFrames = true;
+        Game._fps = fps;
     }
 
 }

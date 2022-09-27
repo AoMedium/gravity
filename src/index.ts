@@ -40,13 +40,17 @@ function initGame() {
 
     let system = SystemBuilder.createSystem("Sol Alpha");
 
-    let mainCamera: Camera = new Camera();
-    let controller: PlayerController = new PlayerController(mainCamera);
+    let controller: PlayerController = new PlayerController(new Camera());
 
-    Game.render = () => {
+    Game.nextFrame = () => {
         system.systemObjects.forEach((entity: Entity) => {
-            entity.update(system.systemObjects);
+            if (!Game.isPaused) {
+                entity.update(system.systemObjects);
+            }
+            
             entity.render(controller);
+
+            controller.getActiveCamera().update();
         })
     }
 
