@@ -1,8 +1,21 @@
 //import systemJson from './json/systems.json';
-import { Vector2, Entity } from './models.js';
+import { 
+    Vector2, 
+    System,
+    Entity, 
+    GravityObject, 
+    GravityObjectArgs,
+    EntityAttributes,
+} from './models.js';
+import { Game } from './game.js';
 
 const NON_ZERO_FACTOR = 0.00001;
 const G = 0.1;
+
+export type OrbitParams = {
+    pos: Vector2,
+    vel: Vector2
+}
 
 export class Calculations {
     public static calculateAcceleration(displacement: Vector2, mass: number): Vector2 {
@@ -15,86 +28,164 @@ export class Calculations {
     
         return direction.scale(aMagnitude);
     }
-}
 
-interface System {
-    systemName: string;
-    systemCenter: string;
-    AU: number;
-    systemObjects: SystemObject[]; 
-}
+    public static calculateOrbitPosition(system: System, parentName: string, satellite: GravityObject): OrbitParams {
+        console.log("Sat")
+        console.log(satellite);
 
-interface SystemObject {
-    name: string;
-    mass: number;
-    pos?: Vector2;
-    distance?: Vector2;
-    entityAttributes: EntityAttributes[];
-}
+        const isClockwise: boolean = false;
+        const angle: number = Math.random() * 2 * Math.PI;
 
-interface EntityAttributes {
-    fixed?: boolean;
-    orbit?: boolean;
-    primaryColor: string;
+        let pos: Vector2 = new Vector2();
+        let vel: Vector2 = new Vector2();
+
+        let parent: GravityObject = system.systemObjects.find(obj => obj.name == parentName);
+
+        pos.x = Math.round(satellite.attributes.distance * Math.cos(angle) + parent.pos.x);
+        pos.y = Math.round(satellite.attributes.distance * Math.sin(angle) + parent.pos.y);
+
+
+        let separation: number = parent.pos.subtract(pos).magnitude();
+        let vScalar = Math.sqrt(G * parent.mass / separation);
+
+        if (isClockwise) {
+            // Use 0 - - - 0 + + + graphing method to determine signs
+
+            vel.x = vScalar * -Math.sin(angle); 
+            vel.y = vScalar * Math.cos(angle);
+        } else {
+            vel.x = vScalar * Math.sin(angle);
+            vel.y = vScalar * -Math.cos(angle);
+        }
+
+        return { pos, vel };
+    }
 }
 
 export class SystemBuilder {
-    public static createSystem(systemName: string): Entity[] {
-        let system: Entity[] = [];
 
-        let parsedSystem: System = JSON.parse(json).systems;
-
+    private static deserializer(json: string, systemName: string): System {
+        let parsedSystems: System[] = [];
         
+        let systemsJsonObj: System[] = JSON.parse(json).systems;
+        console.log(systemsJsonObj);
+
+        let systemJsonObj: System = systemsJsonObj.find(system => system.name == systemName)
+        let parsedSystem: System = new System(systemJsonObj);
+
+        systemJsonObj.systemObjects.forEach(objJson => {
+            console.log(objJson)
+
+            let attributes: EntityAttributes;
+
+            if (objJson.attributes == undefined) {
+                attributes = new EntityAttributes();
+            } else {
+                attributes = objJson.attributes;
+                attributes.distance *= parsedSystem.AU; // Convert distance to system AU
+            }
+
+            let args: GravityObjectArgs = {
+                name: objJson.name,
+                mass: objJson.mass,
+                attributes: attributes
+            };
+            
+            parsedSystem.add(new GravityObject(args));
+        });
+
+        parsedSystem.calculateOrbits();
         console.log(parsedSystem);
+
+        return parsedSystem;
+    }
+
+    public static createSystem(name: string): System {
+        let system: System = SystemBuilder.deserializer(systemsJson, name);
+        
 
         return system;
     }
 }
 
 
-let json = `{
+let systemsJson = `{
     "systems": [
         {
-            "systemName": "Sol Alpha",
-            "systemCenter": "Sol Alpha",
+            "name": "Basic System",
+            "center": "Star",
+            "AU": 5000, 
+
+            "systemObjects": [
+                {
+                    "name": "Star",
+                    "mass": 100000,
+                    "pos": {
+                        "x":0,
+                        "y":0
+                    }
+                },
+                {
+                    "name": "Planet 1",
+                    "mass": 100,
+                    "pos": {
+                        "x":0,
+                        "y":0
+                    },
+                    "vel": {
+                        "dx":0,
+                        "dy":0
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Sol Alpha",
+            "center": "Sol Alpha",
             "AU": 5000,
+        
             "systemObjects": [
                 {
                     "name": "Sol Alpha",
                     "mass": 59600000,
-                    "entityAttributes": {
-                        "fixed": true,
-                        "primaryColor": "#fff"
-                    }
+                    "pos": { 
+                        "x":0, 
+                        "y":0
+                    },
+                    "attributes": { 
+                            "fixed": true,
+                            "primaryColor": "#fff" 
+                        }
                 },
                 {
                     "name": "Kas",
                     "mass": 55,
-                    "distance": 0.387,
-                    "entityAttributes": {
-                        "orbit": true,
-                        "primaryColor": "#aaa"
-                    }
+                    "attributes": {
+                            "orbit": true,
+                            "distance": 0.387,
+                            "primaryColor": "#aaa" 
+                        }
                 },
                 {
                     "name": "Ayca",
                     "mass": 815,
-                    "distance": 0.723,
-                    "entityAttributes": {
-                        "orbit": true,
-                        "primaryColor": "#ff9d00"
-                    }
+                    "attributes": {
+                            "orbit": true,
+                            "distance": 0.723,
+                            "primaryColor": "#ff9d00" 
+                        }
                 },
                 {
                     "name": "Terra",
                     "mass": 1000,
-                    "distance": 1,
-                    "entityAttributes": {
-                        "orbit": true,
-                        "primaryColor": "#00aeff"
-                    }
+                    "attributes": {
+                            "orbit": true,
+                            "distance": 1,
+                            "primaryColor": "#00aeff" 
+                        }
                 }
             ]
         }
-    ]
-}`
+    ] 
+}
+`

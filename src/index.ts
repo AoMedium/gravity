@@ -29,18 +29,11 @@ function main() {
 
 function initGame() {
 
-    let entities: Entity[] = [];
-    let nextId = 0;
-
-    let s = SystemBuilder.createSystem("Sol Alpha");
-
-    entities.push(new GravityObject(nextId, 100, new Vector2(innerWidth/2, innerHeight/2), new Vector2(-1,0)));
-    nextId++;
-    entities.push(new GravityObject(nextId, 5000, new Vector2(innerWidth/3, innerHeight/3), new Vector2(0,0)));
+    let system = SystemBuilder.createSystem("Sol Alpha");
 
     Game.render = () => {
-        entities.forEach((entity: Entity) => {
-            entity.update(entities);
+        system.systemObjects.forEach((entity: Entity) => {
+            entity.update(system.systemObjects);
         })
     }
 
@@ -49,7 +42,6 @@ function initGame() {
     }
 
     Game.setFPS(30);
-
     Game.start();
 }
 

@@ -44,65 +44,131 @@ export class Vector2 {
     }
 }
 
+
+export class EntityAttributes {
+    fixed?: boolean = false;
+    orbit?: boolean = false;
+    center?: string = undefined;
+    distance?: number = 0;
+    primaryColor: string = "#000";
+}
+
+
+
+
 export interface EntityArgs {
     id?: number;
-    pos: Vector2;
+    name?: string;
+    pos?: Vector2;
     vel?: Vector2;
 }
 
 export abstract class Entity {
-    private readonly id: number;
-    private pos: Vector2;
-    private vel: Vector2;
+    private readonly _id: number;
+    private readonly _name: string;
+    private _pos: Vector2;
+    private _vel: Vector2;
 
     constructor(args: EntityArgs) {
-        this.id = args.id || Game.getTick();
-        this.pos = args.pos || Vector2.zero();
-        this.vel = args.vel || Vector2.zero();
+        this._id = args.id || Math.random();
+        this._name = args.name || "Untitled Entity"
+        this._pos = args.pos || Vector2.zero();
+        this._vel = args.vel || Vector2.zero();
     }
 
-    public abstract update(entities: Entity[]): void;
+    public update(entities: Entity[]): void {}
 
-    protected abstract render(): void;
+    protected render(): void {};
 
-    public getId() {
-        return this.id;
+    get id() {
+        return this._id;
     }
 
-    public getPos() {
-        return this.pos;
-    }
-    public setPos(pos: Vector2) {
-        this.pos = pos;
+    get name() {
+        return this._name;
     }
 
-    public getVel() {
-        return this.vel;
+    get pos() {
+        return this._pos;
     }
-    public setVel(vel: Vector2) {
-        this.vel = vel;
+    set pos(pos: Vector2) {
+        this._pos = pos;
+    }
+
+    get vel() {
+        return this._vel;
+    }
+    set vel(vel: Vector2) {
+        this._vel = vel;
+    }
+}
+
+
+
+export class System {
+    name: string;
+    center: string;
+    AU: number;
+    systemObjects: GravityObject[];
+
+    constructor(systemJson) {
+        this.name = systemJson.name || "Untitled System";
+        this.center = systemJson.center || null;
+        this.AU = systemJson.AU || 1;
+        this.systemObjects = [];
+    }
+
+    public add(systemObject: GravityObject): void {
+        this.systemObjects.push(systemObject);
+    }
+
+    public calculateOrbits(): void {
+        this.systemObjects.forEach(obj => {
+            if (!obj.attributes.orbit) {
+                return;
+            }
+            let orbitParams: Utils.OrbitParams
+            // TODO: is there a better way to destructure?
+
+            if (obj.attributes.center === undefined) {
+                obj.attributes.center = this.center;
+            }
+
+            try {
+                orbitParams = Utils.Calculations.calculateOrbitPosition(this, obj.attributes.center, obj);
+            } catch (error) {
+                console.error(error);
+            }
+
+            console.log(orbitParams)
+
+            obj.pos = orbitParams.pos;
+            obj.vel = orbitParams.vel;
+        });
     }
 }
 
 export type GravityObjectArgs = EntityArgs & {
     mass: number;
+    attributes: EntityAttributes;
 }
 
-export class GravityObject extends Entity {
-    private mass: number;
-    //private attributes: EntityAttributes;
 
-    private radius: number;
+export class GravityObject extends Entity {
+    private _mass: number;
+    public attributes: EntityAttributes;
+
+    private _radius: number;
 
     constructor(args: GravityObjectArgs) {
         super(args);
-        this.mass = args.mass;
-        //this.attributes = attributes;
+        this._mass = args.mass;
+        this.attributes = args.attributes;
     }
 
     public update(entities: Entity[]): void {
         //if (!this.attributes.fixed) {
-			this.setPos(this.getPos().add(this.getVel()));
+			this.pos = this.pos.add(this.vel);
 		//}
         this.gravitate(entities);
         this.updateRadiusByMass();
@@ -111,8 +177,9 @@ export class GravityObject extends Entity {
     }
 
     protected render(): void {
+        const scale = 0.01;
         c.beginPath();
-        c.arc(this.getPos().x, this.getPos().y, this.radius, 0, 2 * Math.PI);
+        c.arc(innerWidth/2 + this.pos.x * scale, innerHeight/2 + this.pos.y * scale, this._radius, 0, 2 * Math.PI);
         c.fill();
         c.closePath();
     }
@@ -122,26 +189,26 @@ export class GravityObject extends Entity {
             // delete
 			//entities.splice(searchForEntity(this.id), 1); //perhaps implement queue to lessen calls
 		} else {
-            this.radius = Math.pow(3 * this.mass / (Math.PI * 4), 1/3);
+            this._radius = Math.pow(3 * this.mass / (Math.PI * 4), 1/3) * 0.1;
 		}
 	}
 
     public gravitate(entities: Entity[]): void {
         entities.forEach((entity) => {
-            if (!(entity instanceof GravityObject) || this.getId() == entity.getId()) {
+            if (!(entity instanceof GravityObject) || this.id == entity.id) {
                 return;
             }
 
-            let a = Utils.Calculations.calculateAcceleration(this.getPos().subtract(entity.getPos()), (entity as GravityObject).getMass());
-            this.setVel(this.getVel().add(a));
+            let a = Utils.Calculations.calculateAcceleration(this.pos.subtract(entity.pos), (entity as GravityObject).mass);
+            this.vel = this.vel.add(a);
         })
     }
 
 
-    public getMass() {
-        return this.mass;
+    public get mass() {
+        return this._mass;
     }
-    public setMass(mass: number) {
-        this.mass = mass;
+    public set mass(mass: number) {
+        this._mass = mass;
     }
 }
