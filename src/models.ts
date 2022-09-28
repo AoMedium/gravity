@@ -65,15 +65,6 @@ export class Vector2 {
 }
 
 
-export class EntityAttributes {
-    fixed?: boolean = false;
-    orbit?: boolean = false;
-    center?: string = undefined;
-    distance?: number = 0;
-    primaryColor: string = "#000";
-}
-
-
 
 
 export interface EntityArgs {
@@ -165,6 +156,22 @@ export class System {
     }
 }
 
+export class EntityAttributes {
+    fixed?: boolean;
+    orbit?: boolean;
+    center?: string;
+    distance?: number;
+    primaryColor: string;
+
+    constructor(attributesJson: EntityAttributes) {
+        this.fixed = attributesJson.fixed || false;
+        this.orbit = attributesJson.orbit || false;
+        this.center = attributesJson.center || undefined;
+        this.distance = attributesJson.distance || 0;
+        this.primaryColor = attributesJson.primaryColor || "#fff";
+    }
+}
+
 export type GravityObjectArgs = EntityArgs & {
     mass: number;
     attributes: EntityAttributes;
@@ -177,7 +184,7 @@ export class GravityObject extends Entity {
 
     private _radius: number;
 
-    private _lastPos: Vector2[];
+    private _lastPos: Vector2[] = [];
     private _maxPosEntries: number = 20;
 
     private readonly MIN_DOT_SIZE: number = 2;
@@ -191,7 +198,6 @@ export class GravityObject extends Entity {
         super(args);
         this._mass = args.mass;
         this.attributes = args.attributes;
-        this._lastPos = []
     }
 
     public update(entities: Entity[], controller: PlayerController): void {

@@ -35,6 +35,7 @@ export class Calculations {
             vel.x = vScalar * Math.sin(angle);
             vel.y = vScalar * -Math.cos(angle);
         }
+        vel.add(parent.vel);
         return { pos, vel };
     }
     static degreesToRadians(deg) {
@@ -69,19 +70,14 @@ export class SystemBuilder {
         let systemJsonObj = systemsJsonObj.find(system => system.name == systemName);
         let parsedSystem = new System(systemJsonObj);
         systemJsonObj.systemObjects.forEach(objJson => {
-            let attributes;
-            if (objJson.attributes == undefined) {
-                attributes = new EntityAttributes();
-            }
-            else {
-                attributes = objJson.attributes;
-                attributes.distance *= parsedSystem.AU; // Convert distance to system AU
-            }
+            let attributes = new EntityAttributes(objJson.attributes);
+            attributes.distance *= parsedSystem.AU; // Convert distance to system AU
             let args = {
                 name: objJson.name,
                 mass: objJson.mass,
                 attributes: attributes
             };
+            console.log(attributes);
             parsedSystem.add(new GravityObject(args));
         });
         parsedSystem.calculateOrbits();
@@ -166,10 +162,20 @@ let systemsJson = `{
                             "distance": 1,
                             "primaryColor": "#00aeff" 
                         }
+                },
+                {
+                    "name": "Muna",
+                    "mass": 12,
+                    "attributes": {
+                            "orbit": true,
+                            "center": "Terra",
+                            "distance": 0.002569
+                        }
                 }
             ]
         }
     ] 
 }
+
 `;
 //# sourceMappingURL=utils.js.map

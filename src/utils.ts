@@ -64,6 +64,8 @@ export class Calculations {
             vel.y = vScalar * -Math.cos(angle);
         }
 
+        vel.add(parent.vel)
+
         return { pos, vel };
     }
 
@@ -108,20 +110,16 @@ export class SystemBuilder {
 
         systemJsonObj.systemObjects.forEach(objJson => {
 
-            let attributes: EntityAttributes;
-
-            if (objJson.attributes == undefined) {
-                attributes = new EntityAttributes();
-            } else {
-                attributes = objJson.attributes;
-                attributes.distance *= parsedSystem.AU; // Convert distance to system AU
-            }
+            let attributes: EntityAttributes = new EntityAttributes(objJson.attributes);
+            attributes.distance *= parsedSystem.AU; // Convert distance to system AU
 
             let args: GravityObjectArgs = {
                 name: objJson.name,
                 mass: objJson.mass,
                 attributes: attributes
             };
+
+            console.log(attributes)
             
             parsedSystem.add(new GravityObject(args));
         });
@@ -214,9 +212,19 @@ let systemsJson = `{
                             "distance": 1,
                             "primaryColor": "#00aeff" 
                         }
+                },
+                {
+                    "name": "Muna",
+                    "mass": 12,
+                    "attributes": {
+                            "orbit": true,
+                            "center": "Terra",
+                            "distance": 0.002569
+                        }
                 }
             ]
         }
     ] 
 }
+
 `

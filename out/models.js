@@ -45,15 +45,6 @@ export class Vector2 {
         return new Vector2(this.x, this.y);
     }
 }
-export class EntityAttributes {
-    constructor() {
-        this.fixed = false;
-        this.orbit = false;
-        this.center = undefined;
-        this.distance = 0;
-        this.primaryColor = "#000";
-    }
-}
 export class Entity {
     constructor(args) {
         this._id = args.id || Math.random();
@@ -114,9 +105,19 @@ export class System {
         });
     }
 }
+export class EntityAttributes {
+    constructor(attributesJson) {
+        this.fixed = attributesJson.fixed || false;
+        this.orbit = attributesJson.orbit || false;
+        this.center = attributesJson.center || undefined;
+        this.distance = attributesJson.distance || 0;
+        this.primaryColor = attributesJson.primaryColor || "#fff";
+    }
+}
 export class GravityObject extends Entity {
     constructor(args) {
         super(args);
+        this._lastPos = [];
         this._maxPosEntries = 20;
         this.MIN_DOT_SIZE = 2;
         this.MIN_TAG_OFFSET = this.MIN_DOT_SIZE * 3;
@@ -124,7 +125,6 @@ export class GravityObject extends Entity {
         this.DIAMOND_ANGLE_THRESHOLD = Utils.Calculations.radiansToDiamondAngle(Utils.Calculations.degreesToRadians(10));
         this._mass = args.mass;
         this.attributes = args.attributes;
-        this._lastPos = [];
     }
     update(entities, controller) {
         //if (!this.attributes.fixed) {

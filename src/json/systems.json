@@ -72,6 +72,15 @@
                             "distance": 1,
                             "primaryColor": "#00aeff" 
                         }
+                },
+                {
+                    "name": "Muna",
+                    "mass": 12,
+                    "attributes": {
+                            "orbit": true,
+                            "center": "Terra",
+                            "distance": 0.002569
+                        }
                 }
             ]
         }

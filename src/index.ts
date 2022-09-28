@@ -39,6 +39,7 @@ function initCanvas() {
 function initGame() {
 
     let system = SystemBuilder.createSystem("Sol Alpha");
+    console.log(system);
 
     let controller: PlayerController = new PlayerController(new Camera());
 

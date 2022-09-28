@@ -22,6 +22,7 @@ function initCanvas() {
 }
 function initGame() {
     let system = SystemBuilder.createSystem("Sol Alpha");
+    console.log(system);
     let controller = new PlayerController(new Camera());
     Game.nextFrame = () => {
         system.systemObjects.forEach((entity) => {
