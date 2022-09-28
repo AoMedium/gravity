@@ -37,6 +37,19 @@ export class Calculations {
         }
         return { pos, vel };
     }
+    // https://stackoverflow.com/questions/1427422/cheap-algorithm-to-find-measure-of-angle-between-vectors
+    static toDiamondAngle(v) {
+        if (v.y >= 0)
+            return (v.x >= 0 ? v.y / (v.x + v.y) : 1 - v.x / (-v.x + v.y));
+        else
+            return (v.x < 0 ? 2 - v.y / (-v.x - v.y) : 3 + v.x / (v.x - v.y));
+    }
+    static DiamondAngleToPoint(dia) {
+        return {
+            "x": (dia < 2 ? 1 - dia : dia - 3),
+            "y": (dia < 3 ? ((dia > 1) ? 2 - dia : dia) : dia - 4)
+        };
+    }
 }
 export class SystemBuilder {
     static deserializer(json, systemName) {

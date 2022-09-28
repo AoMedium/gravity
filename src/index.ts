@@ -45,7 +45,7 @@ function initGame() {
     Game.nextFrame = () => {
         system.systemObjects.forEach((entity: Entity) => {
             if (!Game.isPaused) {
-                entity.update(system.systemObjects);
+                entity.update(system.systemObjects, controller);
             }
             
             entity.render(controller);
@@ -58,7 +58,7 @@ function initGame() {
         c.clearRect(0, 0, innerWidth, innerHeight);
     }
 
-    Game.setFPS(30);
+    Game.setFPS(60);
     Game.start();
 }
 

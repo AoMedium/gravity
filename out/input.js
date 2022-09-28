@@ -4,7 +4,11 @@ export class Camera {
     constructor(pos) {
         this._vel = Vector2.zero();
         this._scale = 1;
-        this._drag = 0.01;
+        this._useSmoothMovement = false;
+        // Drag for smooth movement
+        this.drag = 0.01;
+        // Scaled amount to move when useSmoothMovement is disabled
+        this.staticMoveFactor = 20;
         this._id = Math.random();
         this._pos = pos || Vector2.zero();
     }
@@ -12,15 +16,23 @@ export class Camera {
         if (this._vel.equals(Vector2.zero())) {
             return;
         }
-        this._pos.add(this._vel);
-        // Limit how small the velocity can go, based on scale
-        if (this._vel.magnitude() < this._drag / this._scale) {
-            this._vel = Vector2.zero();
-            console.log("zeroed velocity");
+        if (this._useSmoothMovement) {
+            // Limit how small the velocity can go, based on scale
+            if (this._vel.magnitude() < this.drag / this._scale) {
+                this._vel = Vector2.zero();
+            }
+            else {
+                this._vel.scale(1 - this.drag);
+            }
+            this._pos.add(this._vel);
         }
         else {
-            this._vel.scale(1 - this._drag);
+            this._pos.add(Vector2.scale(this._vel, this.staticMoveFactor));
+            this._vel = Vector2.zero();
         }
+    }
+    toggleSmoothMovement() {
+        this._useSmoothMovement = !this._useSmoothMovement;
     }
     get id() {
         return this._id;
@@ -102,6 +114,9 @@ export class PlayerController {
                     if (cameraVal.scale / this._scaleMultiplier > 0.000001) {
                         this._cameras[cameraIndex].scale = this._cameras[cameraIndex].scale / this._scaleMultiplier;
                     }
+                    break;
+                case "s":
+                    this._cameras[cameraIndex].toggleSmoothMovement();
                     break;
                 case "/":
                     Game.togglePause();

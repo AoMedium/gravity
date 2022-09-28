@@ -58,6 +58,10 @@ export class Vector2 {
     public static zero(): Vector2 {
         return new Vector2(0, 0);
     }
+
+    public copy(): Vector2 {
+        return new Vector2(this.x, this.y);
+    }
 }
 
 
@@ -92,7 +96,7 @@ export abstract class Entity {
         this._vel = args.vel || Vector2.zero();
     }
 
-    public update(entities: Entity[]): void {}
+    public update(entities: Entity[], controller: PlayerController): void {}
 
     public render(controller: PlayerController): void {};
 
@@ -125,13 +129,12 @@ export class System {
     name: string;
     center: string;
     AU: number;
-    systemObjects: GravityObject[];
+    systemObjects: GravityObject[] = [];
 
     constructor(systemJson) {
         this.name = systemJson.name || "Untitled System";
         this.center = systemJson.center || null;
         this.AU = systemJson.AU || 1;
-        this.systemObjects = [];
     }
 
     public add(systemObject: GravityObject): void {
@@ -174,35 +177,44 @@ export class GravityObject extends Entity {
 
     private _radius: number;
 
-    private readonly tagOffset: Vector2 = new Vector2(6, 10);
-    private readonly minDotSize: number = 2;
+    private _lastPos: Vector2[];
+    private _maxPosEntries: number = 10;
+
+    private readonly TAG_OFFSET: Vector2 = new Vector2(6, 10);
+    private readonly MIN_DOT_SIZE: number = 2;
+
+    // Threshold for when a new pos should be added
+    private readonly DIAMOND_ANGLE_THRESHOLD: number = Utils.Calculations.toDiamondAngle(new Vector2(5, 1)); // around 10 degrees
 
     constructor(args: GravityObjectArgs) {
         super(args);
         this._mass = args.mass;
         this.attributes = args.attributes;
+        this._lastPos = []
     }
 
-    public update(entities: Entity[]): void {
+    public update(entities: Entity[], controller: PlayerController): void {
         //if (!this.attributes.fixed) {
 			this.pos.add(this.vel);
 		//}
         this.gravitate(entities);
         this.updateRadiusByMass();
+
+        this.updatePosEntries(controller.getActiveCamera().scale);
     }
 
     public render(controller: PlayerController): void {
-        let camera = controller.getActiveCamera();
-        let scale = camera.scale;
+        const camera = controller.getActiveCamera();
+        const scale = camera.scale;
 
-        let renderPos: Vector2 = Utils.Calculations.calculateRenderPos(this.pos, camera);
+        const renderPos: Vector2 = Utils.Calculations.calculateRenderPos(this.pos, camera);
 
-        let drawBody = () => {
-            c.fillStyle = this.attributes.primaryColor;
+        const drawBody = () => {
             c.beginPath();
+            c.fillStyle = this.attributes.primaryColor;
 
-            if (this._radius * scale < this.minDotSize) {
-                c.arc(renderPos.x, renderPos.y, this.minDotSize, 0, 2 * Math.PI);
+            if (this._radius * scale < this.MIN_DOT_SIZE) {
+                c.arc(renderPos.x, renderPos.y, this.MIN_DOT_SIZE, 0, 2 * Math.PI);
             } else {
                 c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
             }
@@ -211,23 +223,53 @@ export class GravityObject extends Entity {
             c.closePath();
         }
 
-        let drawText = () => {
+        const drawText = () => {
+            const indent: number = 5; // TODO: check if it is more performant to have unchanging function constants inside or outside loop
+
+            c.beginPath();
 
             c.strokeStyle = "#000" // Colors.Black;
             c.fillStyle = this.attributes.primaryColor; // Text color
             c.lineWidth = 3;
-            c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+            c.strokeText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
             c.lineWidth = 1;
-            c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+            c.fillText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
         
             c.fillText("<TYPE>" + " / " + Math.round(this.mass), 
-                renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
+                indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 2);
+            c.fillText("(" + Math.round(this.pos.x) + ", " + Math.round(this.pos.y) + ")", 
+                indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 3);
             
             c.closePath();
         }
 
-        drawBody();
-        drawText();
+        const drawTrail = () => {
+            const trailNodeRadius = 2;
+            let trailRenderPos: Vector2;
+
+            c.beginPath();
+            c.strokeStyle = this.attributes.primaryColor;
+            c.fillStyle = this.attributes.primaryColor;
+		    c.lineWidth = 1;
+
+            this._lastPos.forEach(pos => {
+                trailRenderPos = Utils.Calculations.calculateRenderPos(pos, camera);
+                c.lineTo(trailRenderPos.x, trailRenderPos.y);
+                c.fillRect(trailRenderPos.x - trailNodeRadius * 0.5, trailRenderPos.y - trailNodeRadius * 0.5, 
+                    trailNodeRadius, trailNodeRadius)
+            })
+            c.lineTo(renderPos.x, renderPos.y);
+            c.stroke();
+            c.closePath();
+        }
+
+        const draw = () => {
+            drawTrail();
+            drawBody();
+            drawText();
+        }
+
+        draw();
         
     }
 
@@ -240,17 +282,59 @@ export class GravityObject extends Entity {
 		}
 	}
 
-    public gravitate(entities: Entity[]): void {
+    private gravitate(entities: Entity[]): void {
         entities.forEach((entity) => {
             if (!(entity instanceof GravityObject) || this.id == entity.id) {
                 return;
             }
 
-            let a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos,entity.pos), (entity as GravityObject).mass);
+            const a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos,entity.pos), (entity as GravityObject).mass);
             this.vel.add(a);
         })
     }
 
+    private updatePosEntries(scale: number): void {
+        const newPosEntry = (pos: Vector2): void => {
+            if (this._lastPos.length > this._maxPosEntries - 1) {
+                this._lastPos.splice(0, 1);
+            }
+            this._lastPos.push(pos.copy()); // Need to copy as simply pushing would pass by reference, resulting in the value changing
+        }
+
+        const passPosThreshold = (): boolean => {
+            const scaledThreshold: number = 50/scale;
+            const lastPos1: Vector2 = this._lastPos[this._lastPos.length - 1]; // TODO: is there a better way of getting last element without removing (e.g: pop())
+            const lastPos2: Vector2 = this._lastPos[this._lastPos.length - 2];
+
+            // Calculate displacement for old: (last - 2ndLast), and new: (now - last)
+            let oldDisplacement: Vector2 = Vector2.subtract(lastPos2, lastPos1);
+            let newDisplacement: Vector2 = Vector2.subtract(lastPos1, this.pos);
+
+            // Calculate the diamond angle between the two displacement vectors
+            let displacementAngle: number = Math.abs(
+                Utils.Calculations.toDiamondAngle(newDisplacement) - Utils.Calculations.toDiamondAngle(oldDisplacement));
+
+            if (this.name == "Kas" && Game.getTick() % 200 == 0) {
+                console.log(this.DIAMOND_ANGLE_THRESHOLD);
+                console.log(displacementAngle);
+            }
+
+            if (newDisplacement.magnitude() > scaledThreshold || displacementAngle > this.DIAMOND_ANGLE_THRESHOLD) {
+                return true;
+            }
+            return false;
+        }
+
+        if (this._lastPos.length < 2) {
+            newPosEntry(this.pos);
+            return;
+        }
+        
+        // Second if to check, as passPosThreshold requires at least one existing entry
+        if (passPosThreshold()) {
+            newPosEntry(this.pos);
+        }
+    }
 
     public get mass() {
         return this._mass;

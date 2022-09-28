@@ -26,7 +26,7 @@ function initGame() {
     Game.nextFrame = () => {
         system.systemObjects.forEach((entity) => {
             if (!Game.isPaused) {
-                entity.update(system.systemObjects);
+                entity.update(system.systemObjects, controller);
             }
             entity.render(controller);
             controller.getActiveCamera().update();
@@ -35,7 +35,7 @@ function initGame() {
     Game.clear = () => {
         c.clearRect(0, 0, innerWidth, innerHeight);
     };
-    Game.setFPS(30);
+    Game.setFPS(60);
     Game.start();
 }
 main();

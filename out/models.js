@@ -1,5 +1,6 @@
 import * as Utils from './utils.js';
 import { c } from './index.js';
+import { Game } from './game.js';
 export class Vector2 {
     constructor(x, y) {
         this.x = x || 0;
@@ -41,6 +42,9 @@ export class Vector2 {
     static zero() {
         return new Vector2(0, 0);
     }
+    copy() {
+        return new Vector2(this.x, this.y);
+    }
 }
 export class EntityAttributes {
     constructor() {
@@ -58,7 +62,7 @@ export class Entity {
         this._pos = args.pos || Vector2.zero();
         this._vel = args.vel || Vector2.zero();
     }
-    update(entities) { }
+    update(entities, controller) { }
     render(controller) { }
     ;
     get id() {
@@ -82,10 +86,10 @@ export class Entity {
 }
 export class System {
     constructor(systemJson) {
+        this.systemObjects = [];
         this.name = systemJson.name || "Untitled System";
         this.center = systemJson.center || null;
         this.AU = systemJson.AU || 1;
-        this.systemObjects = [];
     }
     add(systemObject) {
         this.systemObjects.push(systemObject);
@@ -114,27 +118,32 @@ export class System {
 export class GravityObject extends Entity {
     constructor(args) {
         super(args);
-        this.tagOffset = new Vector2(6, 10);
-        this.minDotSize = 2;
+        this._maxPosEntries = 10;
+        this.TAG_OFFSET = new Vector2(6, 10);
+        this.MIN_DOT_SIZE = 2;
+        // Threshold for when a new pos should be added
+        this.DIAMOND_ANGLE_THRESHOLD = Utils.Calculations.toDiamondAngle(new Vector2(5, 1)); // around 10 degrees
         this._mass = args.mass;
         this.attributes = args.attributes;
+        this._lastPos = [];
     }
-    update(entities) {
+    update(entities, controller) {
         //if (!this.attributes.fixed) {
         this.pos.add(this.vel);
         //}
         this.gravitate(entities);
         this.updateRadiusByMass();
+        this.updatePosEntries(controller.getActiveCamera().scale);
     }
     render(controller) {
-        let camera = controller.getActiveCamera();
-        let scale = camera.scale;
-        let renderPos = Utils.Calculations.calculateRenderPos(this.pos, camera);
-        let drawBody = () => {
-            c.fillStyle = this.attributes.primaryColor;
+        const camera = controller.getActiveCamera();
+        const scale = camera.scale;
+        const renderPos = Utils.Calculations.calculateRenderPos(this.pos, camera);
+        const drawBody = () => {
             c.beginPath();
-            if (this._radius * scale < this.minDotSize) {
-                c.arc(renderPos.x, renderPos.y, this.minDotSize, 0, 2 * Math.PI);
+            c.fillStyle = this.attributes.primaryColor;
+            if (this._radius * scale < this.MIN_DOT_SIZE) {
+                c.arc(renderPos.x, renderPos.y, this.MIN_DOT_SIZE, 0, 2 * Math.PI);
             }
             else {
                 c.arc(renderPos.x, renderPos.y, this._radius * scale, 0, 2 * Math.PI);
@@ -142,18 +151,41 @@ export class GravityObject extends Entity {
             c.fill();
             c.closePath();
         };
-        let drawText = () => {
+        const drawText = () => {
+            const indent = 5; // TODO: check if it is more performant to have unchanging function constants inside or outside loop
+            c.beginPath();
             c.strokeStyle = "#000"; // Colors.Black;
             c.fillStyle = this.attributes.primaryColor; // Text color
             c.lineWidth = 3;
-            c.strokeText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
+            c.strokeText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
             c.lineWidth = 1;
-            c.fillText(this.name, renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y);
-            c.fillText("<TYPE>" + " / " + Math.round(this.mass), renderPos.x + this.tagOffset.x, renderPos.y + this.tagOffset.y * 2);
+            c.fillText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
+            c.fillText("<TYPE>" + " / " + Math.round(this.mass), indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 2);
+            c.fillText("(" + Math.round(this.pos.x) + ", " + Math.round(this.pos.y) + ")", indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 3);
             c.closePath();
         };
-        drawBody();
-        drawText();
+        const drawTrail = () => {
+            const trailNodeRadius = 2;
+            let trailRenderPos;
+            c.beginPath();
+            c.strokeStyle = this.attributes.primaryColor;
+            c.fillStyle = this.attributes.primaryColor;
+            c.lineWidth = 1;
+            this._lastPos.forEach(pos => {
+                trailRenderPos = Utils.Calculations.calculateRenderPos(pos, camera);
+                c.lineTo(trailRenderPos.x, trailRenderPos.y);
+                c.fillRect(trailRenderPos.x - trailNodeRadius * 0.5, trailRenderPos.y - trailNodeRadius * 0.5, trailNodeRadius, trailNodeRadius);
+            });
+            c.lineTo(renderPos.x, renderPos.y);
+            c.stroke();
+            c.closePath();
+        };
+        const draw = () => {
+            drawTrail();
+            drawBody();
+            drawText();
+        };
+        draw();
     }
     updateRadiusByMass() {
         if (this.mass < 1) {
@@ -169,9 +201,43 @@ export class GravityObject extends Entity {
             if (!(entity instanceof GravityObject) || this.id == entity.id) {
                 return;
             }
-            let a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos, entity.pos), entity.mass);
+            const a = Utils.Calculations.calculateAcceleration(Vector2.subtract(this.pos, entity.pos), entity.mass);
             this.vel.add(a);
         });
+    }
+    updatePosEntries(scale) {
+        const newPosEntry = (pos) => {
+            if (this._lastPos.length > this._maxPosEntries - 1) {
+                this._lastPos.splice(0, 1);
+            }
+            this._lastPos.push(pos.copy()); // Need to copy as simply pushing would pass by reference, resulting in the value changing
+        };
+        const passPosThreshold = () => {
+            const scaledThreshold = 50 / scale;
+            const lastPos1 = this._lastPos[this._lastPos.length - 1]; // TODO: is there a better way of getting last element without removing (e.g: pop())
+            const lastPos2 = this._lastPos[this._lastPos.length - 2];
+            // Calculate displacement for old: (last - 2ndLast), and new: (now - last)
+            let oldDisplacement = Vector2.subtract(lastPos2, lastPos1);
+            let newDisplacement = Vector2.subtract(lastPos1, this.pos);
+            // Calculate the diamond angle between the two displacement vectors
+            let displacementAngle = Math.abs(Utils.Calculations.toDiamondAngle(newDisplacement) - Utils.Calculations.toDiamondAngle(oldDisplacement));
+            if (this.name == "Kas" && Game.getTick() % 200 == 0) {
+                console.log(this.DIAMOND_ANGLE_THRESHOLD);
+                console.log(displacementAngle);
+            }
+            if (newDisplacement.magnitude() > scaledThreshold || displacementAngle > this.DIAMOND_ANGLE_THRESHOLD) {
+                return true;
+            }
+            return false;
+        };
+        if (this._lastPos.length < 2) {
+            newPosEntry(this.pos);
+            return;
+        }
+        // Second if to check, as passPosThreshold requires at least one existing entry
+        if (passPosThreshold()) {
+            newPosEntry(this.pos);
+        }
     }
     get mass() {
         return this._mass;
