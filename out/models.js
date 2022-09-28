@@ -1,6 +1,5 @@
 import * as Utils from './utils.js';
 import { c } from './index.js';
-import { Game } from './game.js';
 export class Vector2 {
     constructor(x, y) {
         this.x = x || 0;
@@ -118,11 +117,11 @@ export class System {
 export class GravityObject extends Entity {
     constructor(args) {
         super(args);
-        this._maxPosEntries = 10;
-        this.TAG_OFFSET = new Vector2(6, 10);
+        this._maxPosEntries = 20;
         this.MIN_DOT_SIZE = 2;
+        this.MIN_TAG_OFFSET = this.MIN_DOT_SIZE * 3;
         // Threshold for when a new pos should be added
-        this.DIAMOND_ANGLE_THRESHOLD = Utils.Calculations.toDiamondAngle(new Vector2(5, 1)); // around 10 degrees
+        this.DIAMOND_ANGLE_THRESHOLD = Utils.Calculations.radiansToDiamondAngle(Utils.Calculations.degreesToRadians(10));
         this._mass = args.mass;
         this.attributes = args.attributes;
         this._lastPos = [];
@@ -152,16 +151,20 @@ export class GravityObject extends Entity {
             c.closePath();
         };
         const drawText = () => {
-            const indent = 5; // TODO: check if it is more performant to have unchanging function constants inside or outside loop
+            let tagOffset = new Vector2(this._radius * scale, this._radius * scale * 2);
+            if (tagOffset.x < this.MIN_TAG_OFFSET) {
+                tagOffset = new Vector2(this.MIN_TAG_OFFSET, this.MIN_TAG_OFFSET * 2);
+            }
+            const indent = new Vector2(5, 10); // TODO: check if it is more performant to have unchanging function constants inside or outside loop
             c.beginPath();
             c.strokeStyle = "#000"; // Colors.Black;
             c.fillStyle = this.attributes.primaryColor; // Text color
             c.lineWidth = 3;
-            c.strokeText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
+            c.strokeText(this.name, renderPos.x + tagOffset.x, renderPos.y + tagOffset.y);
             c.lineWidth = 1;
-            c.fillText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
-            c.fillText("<TYPE>" + " / " + Math.round(this.mass), indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 2);
-            c.fillText("(" + Math.round(this.pos.x) + ", " + Math.round(this.pos.y) + ")", indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 3);
+            c.fillText(this.name, renderPos.x + tagOffset.x, renderPos.y + tagOffset.y);
+            c.fillText("<TYPE>" + " / " + Math.round(this.mass), indent.x + renderPos.x + tagOffset.x, renderPos.y + tagOffset.y + indent.y);
+            c.fillText("(" + Math.round(this.pos.x) + ", " + Math.round(this.pos.y) + ")", indent.x + renderPos.x + tagOffset.x, renderPos.y + tagOffset.y + indent.y * 2);
             c.closePath();
         };
         const drawTrail = () => {
@@ -221,10 +224,6 @@ export class GravityObject extends Entity {
             let newDisplacement = Vector2.subtract(lastPos1, this.pos);
             // Calculate the diamond angle between the two displacement vectors
             let displacementAngle = Math.abs(Utils.Calculations.toDiamondAngle(newDisplacement) - Utils.Calculations.toDiamondAngle(oldDisplacement));
-            if (this.name == "Kas" && Game.getTick() % 200 == 0) {
-                console.log(this.DIAMOND_ANGLE_THRESHOLD);
-                console.log(displacementAngle);
-            }
             if (newDisplacement.magnitude() > scaledThreshold || displacementAngle > this.DIAMOND_ANGLE_THRESHOLD) {
                 return true;
             }

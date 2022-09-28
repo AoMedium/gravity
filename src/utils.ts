@@ -67,6 +67,10 @@ export class Calculations {
         return { pos, vel };
     }
 
+    public static degreesToRadians(deg: number): number {
+        return deg * (Math.PI / 180);
+    }
+
     // https://stackoverflow.com/questions/1427422/cheap-algorithm-to-find-measure-of-angle-between-vectors
     public static toDiamondAngle(v: Vector2): number {
         if (v.y >= 0)
@@ -75,12 +79,21 @@ export class Calculations {
             return (v.x < 0 ? 2-v.y/(-v.x-v.y) : 3+v.x/(v.x-v.y)); 
     }
 
-    public static DiamondAngleToPoint(dia: number) {
+    public static diamondAngleToPoint(dia: number) {
         return {
             "x": (dia < 2 ? 1-dia : dia-3), 
             "y": (dia < 3 ? ((dia > 1) ? 2-dia : dia) : dia-4)
         };
     }
+
+    /**
+     * Do not use in loops as calculations require cos and sin
+     * @param rad Angle in radians
+     * @returns Angle in diamond angle units
+     */
+    public static radiansToDiamondAngle(rad: number): number {
+      return Calculations.toDiamondAngle(new Vector2(Math.cos(rad), Math.sin(rad)));
+    }  
 }
 
 export class SystemBuilder {

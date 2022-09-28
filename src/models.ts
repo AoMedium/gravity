@@ -178,13 +178,14 @@ export class GravityObject extends Entity {
     private _radius: number;
 
     private _lastPos: Vector2[];
-    private _maxPosEntries: number = 10;
+    private _maxPosEntries: number = 20;
 
-    private readonly TAG_OFFSET: Vector2 = new Vector2(6, 10);
     private readonly MIN_DOT_SIZE: number = 2;
+    private readonly MIN_TAG_OFFSET = this.MIN_DOT_SIZE * 3;
 
     // Threshold for when a new pos should be added
-    private readonly DIAMOND_ANGLE_THRESHOLD: number = Utils.Calculations.toDiamondAngle(new Vector2(5, 1)); // around 10 degrees
+    private readonly DIAMOND_ANGLE_THRESHOLD: number = Utils.Calculations.radiansToDiamondAngle(
+        Utils.Calculations.degreesToRadians(10))
 
     constructor(args: GravityObjectArgs) {
         super(args);
@@ -224,21 +225,27 @@ export class GravityObject extends Entity {
         }
 
         const drawText = () => {
-            const indent: number = 5; // TODO: check if it is more performant to have unchanging function constants inside or outside loop
+            let tagOffset: Vector2 = new Vector2(this._radius * scale, this._radius * scale * 2);
+            
+            if (tagOffset.x < this.MIN_TAG_OFFSET) {
+                tagOffset = new Vector2(this.MIN_TAG_OFFSET, this.MIN_TAG_OFFSET * 2);
+            }
+
+            const indent: Vector2 = new Vector2(5, 10); // TODO: check if it is more performant to have unchanging function constants inside or outside loop
 
             c.beginPath();
 
             c.strokeStyle = "#000" // Colors.Black;
             c.fillStyle = this.attributes.primaryColor; // Text color
             c.lineWidth = 3;
-            c.strokeText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
+            c.strokeText(this.name, renderPos.x + tagOffset.x, renderPos.y + tagOffset.y);
             c.lineWidth = 1;
-            c.fillText(this.name, renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y);
+            c.fillText(this.name, renderPos.x + tagOffset.x, renderPos.y + tagOffset.y);
         
             c.fillText("<TYPE>" + " / " + Math.round(this.mass), 
-                indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 2);
+                indent.x + renderPos.x + tagOffset.x, renderPos.y + tagOffset.y + indent.y);
             c.fillText("(" + Math.round(this.pos.x) + ", " + Math.round(this.pos.y) + ")", 
-                indent + renderPos.x + this.TAG_OFFSET.x, renderPos.y + this.TAG_OFFSET.y * 3);
+                indent.x + renderPos.x + tagOffset.x, renderPos.y + tagOffset.y + indent.y * 2);
             
             c.closePath();
         }
@@ -313,11 +320,6 @@ export class GravityObject extends Entity {
             // Calculate the diamond angle between the two displacement vectors
             let displacementAngle: number = Math.abs(
                 Utils.Calculations.toDiamondAngle(newDisplacement) - Utils.Calculations.toDiamondAngle(oldDisplacement));
-
-            if (this.name == "Kas" && Game.getTick() % 200 == 0) {
-                console.log(this.DIAMOND_ANGLE_THRESHOLD);
-                console.log(displacementAngle);
-            }
 
             if (newDisplacement.magnitude() > scaledThreshold || displacementAngle > this.DIAMOND_ANGLE_THRESHOLD) {
                 return true;
