@@ -93,7 +93,7 @@ var predictUsingOtherBodies = true;
 
 
 
-var forceFrames = true; //force framing actually more intensive
+var forceFrames = false; //force framing actually more intensive
 var fps = 15;
 
 
