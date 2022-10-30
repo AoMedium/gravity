@@ -2,6 +2,11 @@
 import { Vector2, System, GravityObject, EntityAttributes, } from './models.js';
 const NON_ZERO_FACTOR = 0.00001;
 const G = 0.0001;
+export class Canvas {
+    static outOfBounds(pos) {
+        return pos.x < 0 || pos.x > innerWidth || pos.y < 0 || pos.y > innerHeight;
+    }
+}
 export class Calculations {
     static calculateRenderPos(pos, camera) {
         let renderPos = Vector2.scale(Vector2.subtract(pos, camera.pos), camera.scale);

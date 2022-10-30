@@ -18,6 +18,12 @@ export type OrbitParams = {
     vel: Vector2
 }
 
+export class Canvas {
+    public static outOfBounds(pos: Vector2): boolean {
+        return pos.x < 0 || pos.x > innerWidth || pos.y < 0 || pos.y > innerHeight;
+    }
+}
+
 export class Calculations {
 
     public static calculateRenderPos(pos: Vector2, camera: Camera): Vector2 {

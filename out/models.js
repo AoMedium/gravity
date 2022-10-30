@@ -138,6 +138,10 @@ export class GravityObject extends Entity {
         const camera = controller.getActiveCamera();
         const scale = camera.scale;
         const renderPos = Utils.Calculations.calculateRenderPos(this.pos, camera);
+        // Cull: do not render if out of canvas bounds
+        if (Utils.Canvas.outOfBounds(renderPos)) {
+            return;
+        }
         const drawBody = () => {
             c.beginPath();
             c.fillStyle = this.attributes.primaryColor;
@@ -171,7 +175,7 @@ export class GravityObject extends Entity {
             const trailNodeRadius = 2;
             let trailRenderPos;
             c.beginPath();
-            c.strokeStyle = this.attributes.primaryColor;
+            c.strokeStyle = this.attributes.primaryColor; // TODO: consider using gradients to ease transition
             c.fillStyle = this.attributes.primaryColor;
             c.lineWidth = 1;
             this._lastPos.forEach(pos => {
