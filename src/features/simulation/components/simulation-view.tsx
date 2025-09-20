@@ -45,7 +45,7 @@ export default function SimulationView() {
         draw={canvasDraw}
         width={window.innerWidth}
         height={window.innerHeight}
-      ></Canvas>
+      />
     </>
   );
 }
