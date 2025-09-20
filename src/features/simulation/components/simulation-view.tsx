@@ -1,17 +1,19 @@
 import Canvas from '@/components/canvas/components/canvas';
 import { useEffect, useRef, useState } from 'react';
-import draw from '../scripts/draw';
 import useEventListener from '../hooks/use-event-listener';
-import Simulation from '../models/simulation';
+import type Simulation from '../models/simulation';
+import BallSimulation from '@/simulations/ball-simulation/ball-simulation';
 
 export default function SimulationView() {
   const [step, setStep] = useState<number>(0);
-  const state = useRef(new Simulation());
+  const state = useRef<Simulation>(null);
 
   const [canvasDraw, setCanvasDraw] =
     useState<(context: CanvasRenderingContext2D) => void>();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    state.current = new BallSimulation(window);
+  }, []);
 
   useEventListener(
     'keypress',
@@ -24,17 +26,17 @@ export default function SimulationView() {
   );
 
   useEffect(() => {
-    // Update
     if (state.current) {
-      state.current.step();
-    }
+      state.current.update();
 
-    setCanvasDraw(
-      () =>
-        function (context: CanvasRenderingContext2D) {
-          draw(context, state.current);
-        },
-    );
+      setCanvasDraw(
+        () =>
+          function (context: CanvasRenderingContext2D) {
+            if (!state.current) return;
+            state.current.draw(context);
+          },
+      );
+    }
   }, [step]);
 
   return (

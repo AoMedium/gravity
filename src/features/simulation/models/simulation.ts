@@ -1,14 +1,15 @@
-export default class Simulation {
-  x: number;
-  y: number;
+export default abstract class Simulation {
+  private _window: Window;
 
-  constructor() {
-    this.x = 0;
-    this.y = 0;
+  constructor(window: Window) {
+    this._window = window;
   }
 
-  public step() {
-    this.x++;
-    this.y++;
+  public get window() {
+    return this._window;
   }
+
+  public abstract update(): void;
+
+  public abstract draw(context: CanvasRenderingContext2D): void;
 }
