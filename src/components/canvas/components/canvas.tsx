@@ -17,12 +17,12 @@ export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
     // Get the canvas and its 2D rendering context.
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const context = canvas.getContext('2d');
+    if (!context) return;
 
     if (!draw) return;
 
-    draw(ctx);
+    draw(context);
 
     // The effect runs only once when the component mounts.
   }, [draw, width, height]);
