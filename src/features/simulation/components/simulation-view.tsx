@@ -6,13 +6,13 @@ import BallSimulation from '@/simulations/ball-simulation/ball-simulation';
 
 export default function SimulationView() {
   const [step, setStep] = useState<number>(0);
-  const state = useRef<Simulation>(null);
+  const simulation = useRef<Simulation>(null);
 
   const [canvasDraw, setCanvasDraw] =
     useState<(context: CanvasRenderingContext2D) => void>();
 
   useEffect(() => {
-    state.current = new BallSimulation(window);
+    simulation.current = new BallSimulation(window);
   }, []);
 
   useEventListener(
@@ -26,14 +26,14 @@ export default function SimulationView() {
   );
 
   useEffect(() => {
-    if (state.current) {
-      state.current.update();
+    if (simulation.current) {
+      simulation.current.update();
 
       setCanvasDraw(
         () =>
           function (context: CanvasRenderingContext2D) {
-            if (!state.current) return;
-            state.current.draw(context);
+            if (!simulation.current) return;
+            simulation.current.draw(context);
           },
       );
     }
