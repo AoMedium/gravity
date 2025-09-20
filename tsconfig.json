@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "es2015",
-        "sourceMap": true,
-        "outDir": "out",
-        "rootDir": "./src",
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "moduleResolution": "node"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
     }
+  }
 }

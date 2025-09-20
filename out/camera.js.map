@@ -1,1 +1,0 @@
-{"version":3,"file":"camera.js","sourceRoot":"","sources":["../src/camera.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,UAAU,CAAC;AAEnC,MAAM,OAAO,MAAM;IAIf,YAAY,GAAa;QACrB,IAAI,CAAC,IAAI,GAAG,GAAG,IAAI,OAAO,CAAC,IAAI,EAAE,CAAC;IACtC,CAAC;CACJ"}
