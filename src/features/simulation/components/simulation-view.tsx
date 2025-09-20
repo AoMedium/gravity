@@ -1,43 +1,25 @@
 import Canvas from '@/components/canvas/components/canvas';
-import { useEffect, useRef, useState } from 'react';
-import useEventListener from '../hooks/use-event-listener';
+import { useEffect, useState } from 'react';
 import type Simulation from '../models/simulation';
-import BallSimulation from '@/simulations/ball-simulation/ball-simulation';
 
-export default function SimulationView() {
-  const [step, setStep] = useState<number>(0);
-  const simulation = useRef<Simulation>(null);
+export interface SimulationViewProps {
+  simulation: Simulation | null;
+  step: number;
+}
 
+export default function SimulationView(props: SimulationViewProps) {
   const [canvasDraw, setCanvasDraw] =
     useState<(context: CanvasRenderingContext2D) => void>();
 
   useEffect(() => {
-    simulation.current = new BallSimulation(window);
-  }, []);
-
-  useEventListener(
-    'keypress',
-    (event: KeyboardEvent) => {
-      if (event.key === 's') {
-        setStep(step + 1);
-      }
-    },
-    [step],
-  );
-
-  useEffect(() => {
-    if (simulation.current) {
-      simulation.current.update();
-
-      setCanvasDraw(
-        () =>
-          function (context: CanvasRenderingContext2D) {
-            if (!simulation.current) return;
-            simulation.current.draw(context);
-          },
-      );
-    }
-  }, [step]);
+    setCanvasDraw(
+      () =>
+        function (context: CanvasRenderingContext2D) {
+          if (!props.simulation) return;
+          props.simulation.draw(context);
+        },
+    );
+  }, [props.step]);
 
   return (
     <>

@@ -1,9 +1,9 @@
-import SimulationView from '@/features/simulation/components/simulation-view';
+import SimulationEngine from '@/features/simulation/components/simulation-engine';
 
 export default function App() {
   return (
     <>
-      <SimulationView />
+      <SimulationEngine />
     </>
   );
 }
