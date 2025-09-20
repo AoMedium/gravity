@@ -1,21 +1,14 @@
 import { useRef, useEffect } from 'react';
 
 interface CanvasProps {
-  draw: (ctx: CanvasRenderingContext2D) => void;
-  step: number;
+  draw: ((ctx: CanvasRenderingContext2D) => void) | undefined;
   width: number;
   height: number;
   // Any other properties to pass down to the canvas element, such as className or id.
   [key: string]: any;
 }
 
-export default function Canvas({
-  draw,
-  step,
-  width,
-  height,
-  ...props
-}: CanvasProps) {
+export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // useResize(canvasRef.current);
@@ -32,7 +25,7 @@ export default function Canvas({
     draw(ctx);
 
     // The effect runs only once when the component mounts.
-  }, [step, width, height]);
+  }, [draw, width, height]);
 
   return (
     <canvas
