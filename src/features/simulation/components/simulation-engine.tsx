@@ -40,15 +40,11 @@ export default function SimulationEngine() {
     }
   }, [running]);
 
-  useEventListener(
-    'keypress',
-    (event: KeyboardEvent) => {
-      if (event.key === 's') {
-        setStep(step + 1);
-      }
-    },
-    [step],
-  );
+  useEventListener('keypress', (event: KeyboardEvent) => {
+    if (event.key === 's') {
+      setStep(step + 1);
+    }
+  });
 
   const start = useCallback(() => setRunning(true), []);
   const stop = useCallback(() => setRunning(false), []);
