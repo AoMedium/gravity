@@ -1,5 +1,5 @@
 import Canvas from '@/components/canvas/components/canvas';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import type Simulation from '../models/simulation';
 import type { RootState } from '@/state/store';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,7 @@ export interface Props {
   simulation: Simulation | null;
 }
 
-export default function SimulationView(props: Props) {
+const SimulationView = memo(function SimulationView(props: Props) {
   const step = useSelector((state: RootState) => state.simulation.step);
 
   const [canvasDraw, setCanvasDraw] =
@@ -33,4 +33,6 @@ export default function SimulationView(props: Props) {
       />
     </>
   );
-}
+});
+
+export default SimulationView;
