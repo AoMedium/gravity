@@ -19,17 +19,22 @@ export default function SimulationEngine() {
 
   useEffect(() => {
     simulation.current = new BallSimulation(window);
+    simulation.current.fps = 10;
   }, []);
 
   useEffect(() => {
     function clear() {
       if (!interval.current) return;
-
       clearInterval(interval.current);
     }
 
+    if (!simulation.current) return;
+
     if (isRunning) {
-      interval.current = setInterval(() => dispatch(increment()), 1000 / 10);
+      interval.current = setInterval(
+        () => dispatch(increment()),
+        1000 / simulation.current.fps,
+      );
       return clear;
     } else {
       clear();
