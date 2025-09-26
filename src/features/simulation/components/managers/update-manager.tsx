@@ -11,7 +11,6 @@ export default function UpdateManager(props: Props) {
   const step = useSelector((state: RootState) => state.simulation.step);
 
   useEffect(() => {
-    console.log(step);
     if (props.simulation) {
       props.simulation.update();
     }
