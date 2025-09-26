@@ -19,7 +19,7 @@ export default function SimulationView(props: SimulationViewProps) {
           props.simulation.draw(context);
         },
     );
-  }, [props.step]);
+  }, [props.simulation, props.step]);
 
   return (
     <>

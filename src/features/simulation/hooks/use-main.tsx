@@ -55,5 +55,5 @@ export default function useMain(
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [ctx, height, width]);
 }

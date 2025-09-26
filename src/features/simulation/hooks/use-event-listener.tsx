@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 
-export default function useEventListener(
-  type: keyof WindowEventMap,
-  listener: any,
-  deps: any[],
+export default function useEventListener<K extends keyof WindowEventMap>(
+  type: K,
+  listener: (this: Window, ev: WindowEventMap[K]) => unknown,
 ) {
   useEffect(() => {
     window.addEventListener(type, listener);
@@ -11,5 +10,5 @@ export default function useEventListener(
     return () => {
       window.removeEventListener(type, listener);
     };
-  }, deps);
+  }, [listener, type]);
 }

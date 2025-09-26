@@ -5,7 +5,7 @@ interface CanvasProps {
   width: number;
   height: number;
   // Any other properties to pass down to the canvas element, such as className or id.
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export default function Canvas({ draw, width, height, ...props }: CanvasProps) {

@@ -6,7 +6,7 @@ export default function useResize(canvas: HTMLCanvasElement | null) {
 
   // fix blurry canvas rendering
   // https://www.kirupa.com/canvas/canvas_high_dpi_retina.htm
-  let canvasScale = window.devicePixelRatio;
+  const canvasScale = window.devicePixelRatio;
   canvas.width = window.innerWidth * canvasScale;
   canvas.height = window.innerHeight * canvasScale;
 
