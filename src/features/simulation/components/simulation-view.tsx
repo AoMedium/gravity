@@ -1,13 +1,16 @@
 import Canvas from '@/components/canvas/components/canvas';
 import { useEffect, useState } from 'react';
 import type Simulation from '../models/simulation';
+import type { RootState } from '@/state/store';
+import { useSelector } from 'react-redux';
 
-export interface SimulationViewProps {
+export interface Props {
   simulation: Simulation | null;
-  step: number;
 }
 
-export default function SimulationView(props: SimulationViewProps) {
+export default function SimulationView(props: Props) {
+  const step = useSelector((state: RootState) => state.simulation.step);
+
   const [canvasDraw, setCanvasDraw] =
     useState<(context: CanvasRenderingContext2D) => void>();
 
@@ -19,7 +22,7 @@ export default function SimulationView(props: SimulationViewProps) {
           props.simulation.draw(context);
         },
     );
-  }, [props.simulation, props.step]);
+  }, [props.simulation, step]);
 
   return (
     <>
