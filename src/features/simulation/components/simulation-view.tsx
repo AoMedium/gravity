@@ -14,11 +14,7 @@ const SimulationView = memo(function SimulationView(props: Props) {
 
   return (
     <>
-      <Canvas
-        draw={draw}
-        width={window.innerWidth}
-        height={window.innerHeight}
-      />
+      <Canvas draw={draw} />
     </>
   );
 });
