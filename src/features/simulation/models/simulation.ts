@@ -16,4 +16,6 @@ export default abstract class Simulation {
   public abstract update(): void;
 
   public abstract draw(context: CanvasRenderingContext2D): void;
+
+  public abstract handleInput(key: string): void;
 }

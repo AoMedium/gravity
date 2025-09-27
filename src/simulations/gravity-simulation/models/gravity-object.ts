@@ -35,7 +35,7 @@ export class GravityObject extends Entity {
     //if (!this.attributes.fixed) {
     this.position.add(this.velocity);
     //}
-    this.gravitate(GravitySimulation.entities);
+    this.gravitate();
     this.updateRadiusByMass();
 
     const camera = GravitySimulation.controller.getActiveCamera();
@@ -48,7 +48,7 @@ export class GravityObject extends Entity {
     const camera = GravitySimulation.controller.getActiveCamera();
     if (!camera) return;
 
-    const scale = 1; // camera.scale;
+    const scale = camera.scale;
 
     const renderPos: Vector2 = Calculations.calculateRenderPos(
       this.position,
@@ -175,8 +175,8 @@ export class GravityObject extends Entity {
     }
   }
 
-  private gravitate(entities: Entity[]): void {
-    entities.forEach((entity) => {
+  private gravitate(): void {
+    GravitySimulation.entities.forEach((entity) => {
       if (!(entity instanceof GravityObject) || this.id == entity.id) {
         return;
       }

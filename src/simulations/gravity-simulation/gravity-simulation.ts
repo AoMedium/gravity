@@ -14,27 +14,41 @@ export default class GravitySimulation extends Simulation {
   }
 
   public init() {
+    // TODO: need to make sure these functions can handle double calling from React
     GravitySimulation.controller = new PlayerController(new Camera());
 
-    GravitySimulation.entities.push(
+    GravitySimulation.entities = [
       new GravityObject({
         name: 'Test 1',
         position: Vector2.zero(),
-        mass: 10,
-        attributes: { primaryColor: '#ddd' },
+        mass: 1000,
+        attributes: { primaryColor: '#fd2' },
       }),
       new GravityObject({
         name: 'Test 2',
-        position: new Vector2(20, 20),
-        mass: 1,
-        attributes: { primaryColor: '#555' },
+        position: new Vector2(50, 50),
+        velocity: new Vector2(0.1, -0.1),
+        mass: 20,
+        attributes: { primaryColor: '#fff' },
       }),
-    );
+      new GravityObject({
+        name: 'Test 3',
+        position: new Vector2(-100, -100),
+        velocity: new Vector2(-0.1, 0.1),
+        mass: 20,
+        attributes: { primaryColor: '#55f' },
+      }),
+    ];
   }
 
   public update() {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       GravitySimulation.entities[i].update();
+    }
+
+    const camera = GravitySimulation.controller.getActiveCamera();
+    if (camera) {
+      camera.update();
     }
   }
 
@@ -45,5 +59,9 @@ export default class GravitySimulation extends Simulation {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       GravitySimulation.entities[i].draw(context);
     }
+  }
+
+  public handleInput(key: string) {
+    GravitySimulation.controller.handleInput(key);
   }
 }

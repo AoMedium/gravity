@@ -1,20 +1,17 @@
-import {
-  incrementFrame,
-  incrementStep,
-  start,
-  stop,
-} from '@/state/simulation/simulation-slice';
+import { start, stop } from '@/state/simulation/simulation-slice';
 import { useDispatch } from 'react-redux';
 import useEventListener from '../../hooks/use-event-listener';
+import type Simulation from '../../models/simulation';
 
-export default function InputManager() {
+interface Props {
+  simulation: Simulation | null;
+}
+
+export default function InputManager(props: Props) {
   const dispatch = useDispatch();
 
-  useEventListener('keypress', (event: KeyboardEvent) => {
-    if (event.key === 's') {
-      dispatch(incrementFrame());
-      dispatch(incrementStep());
-    }
+  useEventListener('keydown', (event: KeyboardEvent) => {
+    props.simulation?.handleInput(event.key);
   });
 
   return (

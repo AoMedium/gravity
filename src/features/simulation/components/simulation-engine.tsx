@@ -23,8 +23,9 @@ export default function SimulationEngine() {
     simulation.current.init();
   }, []);
 
-  useInterval(simulation.current, () => dispatch(incrementStep()), 10);
-  useInterval(simulation.current, () => dispatch(incrementFrame()), 1);
+  // TODO: need to check that step > frame
+  useInterval(simulation.current, () => dispatch(incrementStep()), 20);
+  useInterval(simulation.current, () => dispatch(incrementFrame()), 20);
 
   return (
     <>
