@@ -49,8 +49,8 @@ export class GravityObject extends Entity {
     const camera = GravitySimulation.controller.getActiveCamera();
     if (!camera) return;
 
-    const context = Simulation.context;
-    if (!context) return;
+    const c = Simulation.context;
+    if (!c) return;
 
     const scale = camera.scale;
 
@@ -65,11 +65,11 @@ export class GravityObject extends Entity {
     }
 
     const drawBody = () => {
-      context.beginPath();
-      context.fillStyle = this.attributes.primaryColor;
+      c.beginPath();
+      c.fillStyle = this.attributes.primaryColor;
 
       if (this._radius * scale < this.MIN_DOT_SIZE) {
-        context.arc(
+        c.arc(
           renderPosition.x,
           renderPosition.y,
           this.MIN_DOT_SIZE,
@@ -77,7 +77,7 @@ export class GravityObject extends Entity {
           2 * Math.PI,
         );
       } else {
-        context.arc(
+        c.arc(
           renderPosition.x,
           renderPosition.y,
           this._radius * scale,
@@ -86,8 +86,8 @@ export class GravityObject extends Entity {
         );
       }
 
-      context.fill();
-      context.closePath();
+      c.fill();
+      c.closePath();
     };
 
     const drawText = () => {
@@ -102,64 +102,60 @@ export class GravityObject extends Entity {
 
       const indent: Vector2 = new Vector2(5, 10); // TODO: check if it is more performant to have unchanging function constants inside or outside loop
 
-      context.beginPath();
+      c.beginPath();
 
-      context.strokeStyle = '#000'; // Colors.Black;
-      context.fillStyle = this.attributes.primaryColor; // Text color
-      context.lineWidth = 3;
-      context.strokeText(
+      c.strokeStyle = '#000'; // Colors.Black;
+      c.fillStyle = this.attributes.primaryColor; // Text color
+      c.lineWidth = 3;
+      c.strokeText(
         this.name,
         renderPosition.x + tagOffset.x,
         renderPosition.y + tagOffset.y,
       );
-      context.lineWidth = 1;
-      context.fillText(
+      c.lineWidth = 1;
+      c.fillText(
         this.name,
         renderPosition.x + tagOffset.x,
         renderPosition.y + tagOffset.y,
       );
 
-      context.fillText(
-        '<TYPE>' + ' / ' + Math.round(this.mass),
+      c.fillText(
+        `<TYPE> / ${Math.round(this.mass)}`,
         indent.x + renderPosition.x + tagOffset.x,
         renderPosition.y + tagOffset.y + indent.y,
       );
-      context.fillText(
-        '(' +
-          Math.round(this.position.x) +
-          ', ' +
-          Math.round(this.position.y) +
-          ')',
+      c.fillText(
+        `(${Math.round(this.position.x)}, ${Math.round(this.position.y)})`,
         indent.x + renderPosition.x + tagOffset.x,
         renderPosition.y + tagOffset.y + indent.y * 2,
       );
 
-      context.closePath();
+      c.closePath();
     };
 
     const drawTrail = () => {
       const trailNodeRadius = 2;
       let trailRenderPos: Vector2;
 
-      context.beginPath();
-      context.strokeStyle = this.attributes.primaryColor; // TODO: consider using gradients to ease transition
-      context.fillStyle = this.attributes.primaryColor;
-      context.lineWidth = 1;
+      c.beginPath();
+      c.strokeStyle = this.attributes.primaryColor; // TODO: consider using gradients to ease transition
+      c.fillStyle = this.attributes.primaryColor;
+      c.lineWidth = 1;
 
       for (let i = 0; i < this._previousPositions.length; i++) {
         const position = this._previousPositions[i];
         trailRenderPos = Calculations.calculateRenderPos(position, camera);
-        context.lineTo(trailRenderPos.x, trailRenderPos.y);
-        context.fillRect(
+        c.lineTo(trailRenderPos.x, trailRenderPos.y);
+        c.fillRect(
           trailRenderPos.x - trailNodeRadius * 0.5,
           trailRenderPos.y - trailNodeRadius * 0.5,
           trailNodeRadius,
           trailNodeRadius,
         );
       }
-      context.lineTo(renderPosition.x, renderPosition.y);
-      context.stroke();
-      context.closePath();
+      c.lineTo(renderPosition.x, renderPosition.y);
+      c.stroke();
+      c.closePath();
     };
 
     const draw = () => {
