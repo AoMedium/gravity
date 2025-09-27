@@ -38,7 +38,10 @@ export class GravityObject extends Entity {
     this.gravitate(GravitySimulation.entities);
     this.updateRadiusByMass();
 
-    // this.updatePosEntries(controller.getActiveCamera().scale);
+    const camera = GravitySimulation.controller.getActiveCamera();
+    if (camera) {
+      this.updatePosEntries(camera.scale);
+    }
   }
 
   public draw(context: CanvasRenderingContext2D): void {
