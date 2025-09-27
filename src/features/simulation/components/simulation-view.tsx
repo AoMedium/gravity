@@ -24,13 +24,13 @@ const SimulationView = memo(function SimulationView(props: Props) {
     );
   }, [props.simulation]);
 
-  useEffect(() => {
-    console.log('frame:', frame);
-  }, [frame]);
+  // useEffect(() => {
+  //   console.log('frame:', frame);
+  // }, [frame]);
 
   useEffect(() => {
     setDraw(drawFrame);
-  }, [drawFrame]);
+  }, [drawFrame, frame]); // TODO: fix why this renders Simulation View twice
 
   return (
     <>

@@ -20,8 +20,8 @@ export default function SimulationEngine() {
     simulation.current.fps = 10;
   }, []);
 
-  useInterval(simulation.current, () => dispatch(incrementStep()), 5);
-  useInterval(simulation.current, () => dispatch(incrementFrame()), 1); // TODO: fix why this renders Simulation View twice
+  useInterval(simulation.current, () => dispatch(incrementStep()), 10);
+  useInterval(simulation.current, () => dispatch(incrementFrame()), 1);
 
   return (
     <>
