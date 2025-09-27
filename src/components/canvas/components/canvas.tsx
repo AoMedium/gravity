@@ -4,11 +4,9 @@ interface CanvasProps {
   draw: ((ctx: CanvasRenderingContext2D) => void) | undefined;
   width: number;
   height: number;
-  // Any other properties to pass down to the canvas element, such as className or id.
-  [key: string]: unknown;
 }
 
-export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
+export default function Canvas(props: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -18,10 +16,10 @@ export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    if (!draw) return;
+    if (!props.draw) return;
 
-    draw(context);
-  }, [draw]);
+    props.draw(context);
+  }, [props.draw]);
 
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return <canvas ref={canvasRef} width={props.width} height={props.height} />;
 }
