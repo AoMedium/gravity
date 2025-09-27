@@ -41,7 +41,7 @@
 //       }
 
 //       obj.position = orbitParams.position;
-//       obj.vel = orbitParams.vel;
+//       obj.velocity = orbitParams.velocity;
 //     });
 //   }
 // }

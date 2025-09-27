@@ -37,7 +37,7 @@ export class Calculations {
   //     const angle: number = Math.random() * 2 * Math.PI;
 
   //     const position: Vector2 = new Vector2();
-  //     const vel: Vector2 = new Vector2();
+  //     const velocity: Vector2 = new Vector2();
 
   //     const parent: GravityObject = system.systemObjects.find(
   //       (obj) => obj.name == parentName,
@@ -56,16 +56,16 @@ export class Calculations {
   //     if (isClockwise) {
   //       // Use 0 - - - 0 + + + graphing method to determine signs
 
-  //       vel.x = vScalar * -Math.sin(angle);
-  //       vel.y = vScalar * Math.cos(angle);
+  //       velocity.x = vScalar * -Math.sin(angle);
+  //       velocity.y = vScalar * Math.cos(angle);
   //     } else {
-  //       vel.x = vScalar * Math.sin(angle);
-  //       vel.y = vScalar * -Math.cos(angle);
+  //       velocity.x = vScalar * Math.sin(angle);
+  //       velocity.y = vScalar * -Math.cos(angle);
   //     }
 
-  //     vel.add(parent.vel);
+  //     velocity.add(parent.velocity);
 
-  //     return { position, vel };
+  //     return { position, velocity };
   //   }
 
   public static degreesToRadians(deg: number): number {

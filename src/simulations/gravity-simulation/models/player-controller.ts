@@ -48,28 +48,28 @@ export class PlayerController {
     switch (key) {
       case 'Down': // IE/Edge specific value
       case 'ArrowDown':
-        this._cameras[cameraIndex].vel.add(
+        this._cameras[cameraIndex].velocity.add(
           new Vector2(0, this._moveStepSize / camera.scale),
         );
         break;
 
       case 'Up': // IE/Edge specific value
       case 'ArrowUp':
-        this._cameras[cameraIndex].vel.add(
+        this._cameras[cameraIndex].velocity.add(
           new Vector2(0, -this._moveStepSize / camera.scale),
         );
         break;
 
       case 'Left': // IE/Edge specific value
       case 'ArrowLeft':
-        this._cameras[cameraIndex].vel.add(
+        this._cameras[cameraIndex].velocity.add(
           new Vector2(-this._moveStepSize / camera.scale, 0),
         );
         break;
 
       case 'Right': // IE/Edge specific value
       case 'ArrowRight':
-        this._cameras[cameraIndex].vel.add(
+        this._cameras[cameraIndex].velocity.add(
           new Vector2(this._moveStepSize / camera.scale, 0),
         );
         break;

@@ -21,7 +21,7 @@ export const systemsJson = `{
                         "x":0,
                         "y":0
                     },
-                    "vel": {
+                    "velocity": {
                         "dx":0,
                         "dy":0
                     }

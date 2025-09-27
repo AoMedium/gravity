@@ -53,11 +53,11 @@ export class Camera {
     this._pos = position;
   }
 
-  get vel() {
+  get velocity() {
     return this._vel;
   }
-  set vel(vel: Vector2) {
-    this._pos = vel;
+  set velocity(velocity: Vector2) {
+    this._pos = velocity;
   }
 
   get scale() {

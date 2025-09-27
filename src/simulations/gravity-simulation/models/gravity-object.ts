@@ -189,11 +189,11 @@ export class GravityObject extends Entity {
         return;
       }
 
-      const a = Calculations.calculateAcceleration(
+      const acceleration = Calculations.calculateAcceleration(
         Vector2.subtract(this.position, entity.position),
         (entity as GravityObject).mass,
       );
-      this.velocity.add(a);
+      this.velocity.add(acceleration);
     }
   }
 
