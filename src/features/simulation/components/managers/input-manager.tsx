@@ -1,0 +1,23 @@
+import { start, stop } from '@/state/simulation/simulation-slice';
+import { useDispatch } from 'react-redux';
+import useEventListener from '../../hooks/use-event-listener';
+import type Simulation from '../../models/simulation';
+
+interface Props {
+  simulation: Simulation | null;
+}
+
+export default function InputManager(props: Props) {
+  const dispatch = useDispatch();
+
+  useEventListener('keydown', (event: KeyboardEvent) => {
+    props.simulation?.handleInput(event.key);
+  });
+
+  return (
+    <>
+      <button onClick={() => dispatch(start())}>Start</button>
+      <button onClick={() => dispatch(stop())}>Stop</button>
+    </>
+  );
+}
