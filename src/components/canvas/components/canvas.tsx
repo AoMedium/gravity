@@ -11,8 +11,6 @@ interface CanvasProps {
 export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // useResize(canvasRef.current);
-
   useEffect(() => {
     // Get the canvas and its 2D rendering context.
     const canvas = canvasRef.current;
@@ -23,17 +21,7 @@ export default function Canvas({ draw, width, height, ...props }: CanvasProps) {
     if (!draw) return;
 
     draw(context);
+  }, [draw]);
 
-    // The effect runs only once when the component mounts.
-  }, [draw, width, height]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      {...props}
-      className="rounded-lg shadow-lg w-full h-full border-2 border-gray-300"
-    />
-  );
+  return <canvas ref={canvasRef} width={width} height={height} />;
 }

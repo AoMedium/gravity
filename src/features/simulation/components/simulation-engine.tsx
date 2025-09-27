@@ -3,43 +3,25 @@ import type Simulation from '../models/simulation';
 import SimulationView from './simulation-view';
 import BallSimulation from '@/simulations/ball-simulation/ball-simulation';
 import SimulationManagers from './simulation-managers';
-import type { RootState } from '@/state/store';
-import { useSelector, useDispatch } from 'react-redux';
-import { increment } from '@/state/simulation/simulation-slice';
+import { useDispatch } from 'react-redux';
+import {
+  incrementFrame,
+  incrementStep,
+} from '@/state/simulation/simulation-slice';
+import useInterval from '../hooks/use-interval';
 
 export default function SimulationEngine() {
   const dispatch = useDispatch();
 
-  const isRunning = useSelector(
-    (state: RootState) => state.simulation.isRunning,
-  );
-
   const simulation = useRef<Simulation>(null);
-  const interval = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     simulation.current = new BallSimulation(window);
     simulation.current.fps = 10;
   }, []);
 
-  useEffect(() => {
-    function clear() {
-      if (!interval.current) return;
-      clearInterval(interval.current);
-    }
-
-    if (!simulation.current) return;
-
-    if (isRunning) {
-      interval.current = setInterval(
-        () => dispatch(increment()),
-        1000 / simulation.current.fps,
-      );
-      return clear;
-    } else {
-      clear();
-    }
-  }, [dispatch, isRunning]);
+  useInterval(simulation.current, () => dispatch(incrementStep()), 5);
+  useInterval(simulation.current, () => dispatch(incrementFrame()), 1); // TODO: fix why this renders Simulation View twice
 
   return (
     <>

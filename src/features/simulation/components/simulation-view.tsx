@@ -1,5 +1,5 @@
 import Canvas from '@/components/canvas/components/canvas';
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import type Simulation from '../models/simulation';
 import type { RootState } from '@/state/store';
 import { useSelector } from 'react-redux';
@@ -9,25 +9,33 @@ export interface Props {
 }
 
 const SimulationView = memo(function SimulationView(props: Props) {
-  const step = useSelector((state: RootState) => state.simulation.step);
+  const frame = useSelector((state: RootState) => state.simulation.frame);
 
-  const [canvasDraw, setCanvasDraw] =
+  const [draw, setDraw] =
     useState<(context: CanvasRenderingContext2D) => void>();
 
-  useEffect(() => {
-    setCanvasDraw(
+  const drawFrame = useCallback(() => {
+    setDraw(
       () =>
         function (context: CanvasRenderingContext2D) {
           if (!props.simulation) return;
           props.simulation.draw(context);
         },
     );
-  }, [props.simulation, step]);
+  }, [props.simulation]);
+
+  useEffect(() => {
+    console.log('frame:', frame);
+  }, [frame]);
+
+  useEffect(() => {
+    setDraw(drawFrame);
+  }, [drawFrame]);
 
   return (
     <>
       <Canvas
-        draw={canvasDraw}
+        draw={draw}
         width={window.innerWidth}
         height={window.innerHeight}
       />

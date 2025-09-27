@@ -12,6 +12,7 @@ export default function UpdateManager(props: Props) {
 
   useEffect(() => {
     if (props.simulation) {
+      console.log('step:', step);
       props.simulation.update();
     }
   }, [props.simulation, step]);
