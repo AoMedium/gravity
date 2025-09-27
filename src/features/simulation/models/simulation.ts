@@ -11,6 +11,8 @@ export default abstract class Simulation {
     return this._window;
   }
 
+  public abstract init(): void;
+
   public abstract update(): void;
 
   public abstract draw(context: CanvasRenderingContext2D): void;

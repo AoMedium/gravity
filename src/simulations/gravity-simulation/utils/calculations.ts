@@ -1,0 +1,98 @@
+import { G, NON_ZERO_FACTOR } from '../constants';
+import type { Camera } from '../models/camera';
+import Vector2 from '../models/vector2';
+
+export class Calculations {
+  public static calculateRenderPos(pos: Vector2, camera: Camera): Vector2 {
+    const renderPos = Vector2.scale(
+      Vector2.subtract(pos, camera.pos),
+      camera.scale,
+    );
+    renderPos.add(new Vector2(innerWidth / 2, innerHeight / 2));
+
+    return renderPos;
+  }
+
+  public static calculateAcceleration(
+    displacement: Vector2,
+    mass: number,
+  ): Vector2 {
+    const direction: Vector2 = displacement.normalized();
+    if (displacement.equals(Vector2.zero())) {
+      displacement.add(new Vector2(NON_ZERO_FACTOR, NON_ZERO_FACTOR));
+    }
+
+    const aMagnitude: number =
+      (-G * mass) / (displacement.magnitude() * displacement.magnitude());
+
+    return Vector2.scale(direction, aMagnitude);
+  }
+
+  //   public static calculateOrbitPosition(
+  //     system: System,
+  //     parentName: string,
+  //     satellite: GravityObject,
+  //   ): OrbitParams {
+  //     const isClockwise: boolean = false;
+  //     const angle: number = Math.random() * 2 * Math.PI;
+
+  //     const pos: Vector2 = new Vector2();
+  //     const vel: Vector2 = new Vector2();
+
+  //     const parent: GravityObject = system.systemObjects.find(
+  //       (obj) => obj.name == parentName,
+  //     );
+
+  //     pos.x = Math.round(
+  //       satellite.attributes.distance * Math.cos(angle) + parent.pos.x,
+  //     );
+  //     pos.y = Math.round(
+  //       satellite.attributes.distance * Math.sin(angle) + parent.pos.y,
+  //     );
+
+  //     const separation: number = Vector2.subtract(parent.pos, pos).magnitude();
+  //     const vScalar = Math.sqrt((G * parent.mass) / separation);
+
+  //     if (isClockwise) {
+  //       // Use 0 - - - 0 + + + graphing method to determine signs
+
+  //       vel.x = vScalar * -Math.sin(angle);
+  //       vel.y = vScalar * Math.cos(angle);
+  //     } else {
+  //       vel.x = vScalar * Math.sin(angle);
+  //       vel.y = vScalar * -Math.cos(angle);
+  //     }
+
+  //     vel.add(parent.vel);
+
+  //     return { pos, vel };
+  //   }
+
+  public static degreesToRadians(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+  // https://stackoverflow.com/questions/1427422/cheap-algorithm-to-find-measure-of-angle-between-vectors
+  public static toDiamondAngle(v: Vector2): number {
+    if (v.y >= 0) return v.x >= 0 ? v.y / (v.x + v.y) : 1 - v.x / (-v.x + v.y);
+    else return v.x < 0 ? 2 - v.y / (-v.x - v.y) : 3 + v.x / (v.x - v.y);
+  }
+
+  public static diamondAngleToPoint(dia: number) {
+    return {
+      x: dia < 2 ? 1 - dia : dia - 3,
+      y: dia < 3 ? (dia > 1 ? 2 - dia : dia) : dia - 4,
+    };
+  }
+
+  /**
+   * Do not use in loops as calculations require cos and sin
+   * @param rad Angle in radians
+   * @returns Angle in diamond angle units
+   */
+  public static radiansToDiamondAngle(rad: number): number {
+    return Calculations.toDiamondAngle(
+      new Vector2(Math.cos(rad), Math.sin(rad)),
+    );
+  }
+}
