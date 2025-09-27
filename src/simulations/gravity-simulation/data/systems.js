@@ -9,7 +9,7 @@ export const systemsJson = `{
                 {
                     "name": "Star",
                     "mass": 100000,
-                    "pos": {
+                    "position": {
                         "x":0,
                         "y":0
                     }
@@ -17,7 +17,7 @@ export const systemsJson = `{
                 {
                     "name": "Planet 1",
                     "mass": 100,
-                    "pos": {
+                    "position": {
                         "x":0,
                         "y":0
                     },
@@ -37,7 +37,7 @@ export const systemsJson = `{
                 {
                     "name": "Sol Alpha",
                     "mass": 59600000,
-                    "pos": { 
+                    "position": { 
                         "x":0, 
                         "y":0
                     },

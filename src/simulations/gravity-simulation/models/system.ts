@@ -40,7 +40,7 @@
 //         console.error(error);
 //       }
 
-//       obj.pos = orbitParams.pos;
+//       obj.position = orbitParams.position;
 //       obj.vel = orbitParams.vel;
 //     });
 //   }

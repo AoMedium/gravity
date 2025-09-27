@@ -13,9 +13,9 @@ export class Camera {
   // Scaled amount to move when useSmoothMovement is disabled
   private readonly staticMoveFactor = 20;
 
-  constructor(pos?: Vector2) {
+  constructor(position?: Vector2) {
     this._id = Math.random();
-    this._pos = pos || Vector2.zero();
+    this._pos = position || Vector2.zero();
   }
 
   public update(): void {
@@ -46,11 +46,11 @@ export class Camera {
     return this._id;
   }
 
-  get pos() {
+  get position() {
     return this._pos;
   }
-  set pos(pos: Vector2) {
-    this._pos = pos;
+  set position(position: Vector2) {
+    this._pos = position;
   }
 
   get vel() {

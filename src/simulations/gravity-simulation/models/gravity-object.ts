@@ -16,13 +16,13 @@ export class GravityObject extends Entity {
 
   private _radius: number = 0;
 
-  private _lastPos: Vector2[] = [];
+  private _previousPositions: Vector2[] = [];
   private _maxPosEntries: number = 20;
 
   private readonly MIN_DOT_SIZE: number = 2;
   private readonly MIN_TAG_OFFSET = this.MIN_DOT_SIZE * 3;
 
-  // Threshold for when a new pos should be added
+  // Threshold for when a new position should be added
   private readonly DIAMOND_ANGLE_THRESHOLD: number =
     Calculations.radiansToDiamondAngle(Calculations.degreesToRadians(10));
 
@@ -41,7 +41,7 @@ export class GravityObject extends Entity {
 
     const camera = GravitySimulation.controller.getActiveCamera();
     if (camera) {
-      this.updatePosEntries(camera.scale);
+      this.updateRecordedPositions(camera.scale);
     }
   }
 
@@ -54,13 +54,13 @@ export class GravityObject extends Entity {
 
     const scale = camera.scale;
 
-    const renderPos: Vector2 = Calculations.calculateRenderPos(
+    const renderPosition: Vector2 = Calculations.calculateRenderPos(
       this.position,
       camera,
     );
 
     // Cull: do not render if out of canvas bounds
-    if (Canvas.outOfBounds(renderPos)) {
+    if (Canvas.isOutOfBounds(renderPosition)) {
       return;
     }
 
@@ -70,16 +70,16 @@ export class GravityObject extends Entity {
 
       if (this._radius * scale < this.MIN_DOT_SIZE) {
         context.arc(
-          renderPos.x,
-          renderPos.y,
+          renderPosition.x,
+          renderPosition.y,
           this.MIN_DOT_SIZE,
           0,
           2 * Math.PI,
         );
       } else {
         context.arc(
-          renderPos.x,
-          renderPos.y,
+          renderPosition.x,
+          renderPosition.y,
           this._radius * scale,
           0,
           2 * Math.PI,
@@ -109,20 +109,20 @@ export class GravityObject extends Entity {
       context.lineWidth = 3;
       context.strokeText(
         this.name,
-        renderPos.x + tagOffset.x,
-        renderPos.y + tagOffset.y,
+        renderPosition.x + tagOffset.x,
+        renderPosition.y + tagOffset.y,
       );
       context.lineWidth = 1;
       context.fillText(
         this.name,
-        renderPos.x + tagOffset.x,
-        renderPos.y + tagOffset.y,
+        renderPosition.x + tagOffset.x,
+        renderPosition.y + tagOffset.y,
       );
 
       context.fillText(
         '<TYPE>' + ' / ' + Math.round(this.mass),
-        indent.x + renderPos.x + tagOffset.x,
-        renderPos.y + tagOffset.y + indent.y,
+        indent.x + renderPosition.x + tagOffset.x,
+        renderPosition.y + tagOffset.y + indent.y,
       );
       context.fillText(
         '(' +
@@ -130,8 +130,8 @@ export class GravityObject extends Entity {
           ', ' +
           Math.round(this.position.y) +
           ')',
-        indent.x + renderPos.x + tagOffset.x,
-        renderPos.y + tagOffset.y + indent.y * 2,
+        indent.x + renderPosition.x + tagOffset.x,
+        renderPosition.y + tagOffset.y + indent.y * 2,
       );
 
       context.closePath();
@@ -146,9 +146,9 @@ export class GravityObject extends Entity {
       context.fillStyle = this.attributes.primaryColor;
       context.lineWidth = 1;
 
-      for (let i = 0; i < this._lastPos.length; i++) {
-        const pos = this._lastPos[i];
-        trailRenderPos = Calculations.calculateRenderPos(pos, camera);
+      for (let i = 0; i < this._previousPositions.length; i++) {
+        const position = this._previousPositions[i];
+        trailRenderPos = Calculations.calculateRenderPos(position, camera);
         context.lineTo(trailRenderPos.x, trailRenderPos.y);
         context.fillRect(
           trailRenderPos.x - trailNodeRadius * 0.5,
@@ -157,7 +157,7 @@ export class GravityObject extends Entity {
           trailNodeRadius,
         );
       }
-      context.lineTo(renderPos.x, renderPos.y);
+      context.lineTo(renderPosition.x, renderPosition.y);
       context.stroke();
       context.closePath();
     };
@@ -172,6 +172,7 @@ export class GravityObject extends Entity {
   }
 
   private updateRadiusByMass(): void {
+    // TODO: check if mass has changed to avoid recalculated if not needed
     if (this.mass < 1) {
       // delete
       //entities.splice(searchForEntity(this.id), 1); //perhaps implement queue to lessen calls
@@ -183,6 +184,7 @@ export class GravityObject extends Entity {
   private gravitate(): void {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       const entity = GravitySimulation.entities[i];
+
       if (!(entity instanceof GravityObject) || this.id == entity.id) {
         return;
       }
@@ -195,23 +197,28 @@ export class GravityObject extends Entity {
     }
   }
 
-  private updatePosEntries(scale: number): void {
-    const newPosEntry = (pos: Vector2): void => {
-      if (this._lastPos.length > this._maxPosEntries - 1) {
-        this._lastPos.splice(0, 1);
+  private updateRecordedPositions(scale: number): void {
+    const recordNewPosition = (position: Vector2): void => {
+      if (this._previousPositions.length > this._maxPosEntries - 1) {
+        this._previousPositions.splice(0, 1);
       }
-      this._lastPos.push(pos.copy()); // Need to copy as simply pushing would pass by reference, resulting in the value changing
+      this._previousPositions.push(position.copy()); // Need to copy as simply pushing would pass by reference, resulting in the value changing
     };
 
-    const passPosThreshold = (): boolean => {
+    const hasExceededPositionThreshold = (): boolean => {
       const scaledThreshold: number = 50 / scale;
-      const lastPos1: Vector2 = this._lastPos[this._lastPos.length - 1]; // TODO: is there a better way of getting last element without removing (e.g: pop())
-      const lastPos2: Vector2 = this._lastPos[this._lastPos.length - 2];
+      const lastPosition1: Vector2 =
+        this._previousPositions[this._previousPositions.length - 1]; // TODO: is there a better way of getting last element without removing (e.g: pop())
+      const lastPosition2: Vector2 =
+        this._previousPositions[this._previousPositions.length - 2];
 
       // Calculate displacement for old: (last - 2ndLast), and new: (now - last)
-      const oldDisplacement: Vector2 = Vector2.subtract(lastPos2, lastPos1);
+      const oldDisplacement: Vector2 = Vector2.subtract(
+        lastPosition2,
+        lastPosition1,
+      );
       const newDisplacement: Vector2 = Vector2.subtract(
-        lastPos1,
+        lastPosition1,
         this.position,
       );
 
@@ -230,14 +237,14 @@ export class GravityObject extends Entity {
       return false;
     };
 
-    if (this._lastPos.length < 2) {
-      newPosEntry(this.position);
+    if (this._previousPositions.length < 2) {
+      recordNewPosition(this.position);
       return;
     }
 
     // Second if to check, as passPosThreshold requires at least one existing entry
-    if (passPosThreshold()) {
-      newPosEntry(this.position);
+    if (hasExceededPositionThreshold()) {
+      recordNewPosition(this.position);
     }
   }
 

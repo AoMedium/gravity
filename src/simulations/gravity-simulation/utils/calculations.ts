@@ -3,14 +3,14 @@ import type { Camera } from '../models/camera';
 import Vector2 from '../models/vector2';
 
 export class Calculations {
-  public static calculateRenderPos(pos: Vector2, camera: Camera): Vector2 {
-    const renderPos = Vector2.scale(
-      Vector2.subtract(pos, camera.pos),
+  public static calculateRenderPos(position: Vector2, camera: Camera): Vector2 {
+    const renderPosition = Vector2.scale(
+      Vector2.subtract(position, camera.position),
       camera.scale,
     );
-    renderPos.add(new Vector2(innerWidth / 2, innerHeight / 2));
+    renderPosition.add(new Vector2(innerWidth / 2, innerHeight / 2));
 
-    return renderPos;
+    return renderPosition;
   }
 
   public static calculateAcceleration(
@@ -36,21 +36,21 @@ export class Calculations {
   //     const isClockwise: boolean = false;
   //     const angle: number = Math.random() * 2 * Math.PI;
 
-  //     const pos: Vector2 = new Vector2();
+  //     const position: Vector2 = new Vector2();
   //     const vel: Vector2 = new Vector2();
 
   //     const parent: GravityObject = system.systemObjects.find(
   //       (obj) => obj.name == parentName,
   //     );
 
-  //     pos.x = Math.round(
-  //       satellite.attributes.distance * Math.cos(angle) + parent.pos.x,
+  //     position.x = Math.round(
+  //       satellite.attributes.distance * Math.cos(angle) + parent.position.x,
   //     );
-  //     pos.y = Math.round(
-  //       satellite.attributes.distance * Math.sin(angle) + parent.pos.y,
+  //     position.y = Math.round(
+  //       satellite.attributes.distance * Math.sin(angle) + parent.position.y,
   //     );
 
-  //     const separation: number = Vector2.subtract(parent.pos, pos).magnitude();
+  //     const separation: number = Vector2.subtract(parent.position, position).magnitude();
   //     const vScalar = Math.sqrt((G * parent.mass) / separation);
 
   //     if (isClockwise) {
@@ -65,7 +65,7 @@ export class Calculations {
 
   //     vel.add(parent.vel);
 
-  //     return { pos, vel };
+  //     return { position, vel };
   //   }
 
   public static degreesToRadians(deg: number): number {
