@@ -33,9 +33,9 @@ export class GravityObject extends Entity {
   }
 
   public update(): void {
-    //if (!this.attributes.fixed) {
-    this.position.add(this.velocity);
-    //}
+    if (!this.attributes.fixed) {
+      this.position.add(this.velocity);
+    }
     this.gravitate();
     this.updateRadiusByMass();
 
