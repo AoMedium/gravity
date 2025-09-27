@@ -1,21 +1,21 @@
 import type { RootState } from '@/state/store';
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useResize from '../hooks/use-resize';
 
 interface CanvasProps {
+  canvas: React.RefObject<HTMLCanvasElement | null>;
   draw: ((ctx: CanvasRenderingContext2D) => void) | undefined;
 }
 
 export default function Canvas(props: CanvasProps) {
   const frame = useSelector((state: RootState) => state.simulation.frame);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useResize(canvasRef.current);
+  useResize(props.canvas.current);
 
   useEffect(() => {
     // Get the canvas and its 2D rendering context.
-    const canvas = canvasRef.current;
+    const canvas = props.canvas.current;
     if (!canvas) return;
     const context = canvas.getContext('2d');
     if (!context) return;
@@ -25,5 +25,5 @@ export default function Canvas(props: CanvasProps) {
     props.draw(context);
   }, [props, props.draw, frame]);
 
-  return <canvas ref={canvasRef} />;
+  return <canvas ref={props.canvas} />;
 }

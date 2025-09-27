@@ -1,3 +1,4 @@
+import Simulation from '@/features/simulation/models/simulation';
 import GravitySimulation from '../gravity-simulation';
 import { Calculations } from '../utils/calculations';
 import { Canvas } from '../utils/canvas';
@@ -44,9 +45,12 @@ export class GravityObject extends Entity {
     }
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
+  public draw(): void {
     const camera = GravitySimulation.controller.getActiveCamera();
     if (!camera) return;
+
+    const context = Simulation.context;
+    if (!context) return;
 
     const scale = camera.scale;
 
@@ -142,7 +146,8 @@ export class GravityObject extends Entity {
       context.fillStyle = this.attributes.primaryColor;
       context.lineWidth = 1;
 
-      this._lastPos.forEach((pos) => {
+      for (let i = 0; i < this._lastPos.length; i++) {
+        const pos = this._lastPos[i];
         trailRenderPos = Calculations.calculateRenderPos(pos, camera);
         context.lineTo(trailRenderPos.x, trailRenderPos.y);
         context.fillRect(
@@ -151,7 +156,7 @@ export class GravityObject extends Entity {
           trailNodeRadius,
           trailNodeRadius,
         );
-      });
+      }
       context.lineTo(renderPos.x, renderPos.y);
       context.stroke();
       context.closePath();
@@ -176,7 +181,8 @@ export class GravityObject extends Entity {
   }
 
   private gravitate(): void {
-    GravitySimulation.entities.forEach((entity) => {
+    for (let i = 0; i < GravitySimulation.entities.length; i++) {
+      const entity = GravitySimulation.entities[i];
       if (!(entity instanceof GravityObject) || this.id == entity.id) {
         return;
       }
@@ -186,7 +192,7 @@ export class GravityObject extends Entity {
         (entity as GravityObject).mass,
       );
       this.velocity.add(a);
-    });
+    }
   }
 
   private updatePosEntries(scale: number): void {

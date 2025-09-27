@@ -20,7 +20,7 @@ export default abstract class Entity {
   }
 
   public abstract update(): void;
-  public abstract draw(context: CanvasRenderingContext2D): void;
+  public abstract draw(): void;
 }
 
 export class EntityAttributes {

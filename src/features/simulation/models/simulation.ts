@@ -1,4 +1,6 @@
 export default abstract class Simulation {
+  public static context: CanvasRenderingContext2D | null;
+
   private _window: Window;
   public fps: number;
 

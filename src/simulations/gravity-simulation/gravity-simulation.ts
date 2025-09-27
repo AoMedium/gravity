@@ -52,12 +52,17 @@ export default class GravitySimulation extends Simulation {
     }
   }
 
-  public draw(context: CanvasRenderingContext2D) {
-    if (!context) return;
-    context.clearRect(0, 0, this.window.innerWidth, this.window.innerHeight);
+  public draw() {
+    if (!Simulation.context) return;
+    Simulation.context.clearRect(
+      0,
+      0,
+      this.window.innerWidth,
+      this.window.innerHeight,
+    );
 
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities[i].draw(context);
+      GravitySimulation.entities[i].draw();
     }
   }
 
