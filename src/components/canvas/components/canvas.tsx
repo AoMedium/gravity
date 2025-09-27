@@ -1,4 +1,6 @@
+import type { RootState } from '@/state/store';
 import { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 interface CanvasProps {
   draw: ((ctx: CanvasRenderingContext2D) => void) | undefined;
@@ -7,6 +9,7 @@ interface CanvasProps {
 }
 
 export default function Canvas(props: CanvasProps) {
+  const frame = useSelector((state: RootState) => state.simulation.frame);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export default function Canvas(props: CanvasProps) {
     if (!props.draw) return;
 
     props.draw(context);
-  }, [props.draw]);
+  }, [props, props.draw, frame]);
 
   return <canvas ref={canvasRef} width={props.width} height={props.height} />;
 }
