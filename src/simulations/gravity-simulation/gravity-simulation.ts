@@ -4,10 +4,12 @@ import { GravityObject } from './models/gravity-object';
 import Vector2 from './models/vector2';
 import { Camera } from './models/camera';
 import { PlayerController } from './models/player-controller';
+import type Settings from './models/settings';
 
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
   public static controller: PlayerController;
+  public static settings: Settings;
 
   constructor(window: Window) {
     super(window);
@@ -17,26 +19,37 @@ export default class GravitySimulation extends Simulation {
     // TODO: need to make sure these functions can handle double calling from React
     GravitySimulation.controller = new PlayerController(new Camera());
 
+    GravitySimulation.settings = {
+      showTrailNodes: false,
+    };
+
     GravitySimulation.entities = [
       new GravityObject({
         name: 'Test 1',
         position: Vector2.zero(),
-        mass: 1000,
+        mass: 10000,
         attributes: { primaryColor: '#fd2' },
       }),
       new GravityObject({
         name: 'Test 2',
         position: new Vector2(50, 50),
-        velocity: new Vector2(0.1, -0.1),
-        mass: 20,
+        velocity: new Vector2(0.5, -0.5),
+        mass: 50,
         attributes: { primaryColor: '#fff' },
       }),
       new GravityObject({
         name: 'Test 3',
         position: new Vector2(-100, -100),
-        velocity: new Vector2(-0.1, 0.1),
+        velocity: new Vector2(-0.5, 0.5),
         mass: 20,
         attributes: { primaryColor: '#55f' },
+      }),
+      new GravityObject({
+        name: 'Test 4',
+        position: new Vector2(100, -100),
+        velocity: new Vector2(0.5, 0.5),
+        mass: 300,
+        attributes: { primaryColor: 'rgba(111, 235, 228, 1)' },
       }),
     ];
   }

@@ -134,28 +134,60 @@ export class GravityObject extends Entity {
     };
 
     const drawTrail = () => {
-      const trailNodeRadius = 2;
-      let trailRenderPos: Vector2;
+      if (this._previousPositions.length < 1) {
+        return;
+      }
 
-      c.beginPath();
-      c.strokeStyle = this.attributes.primaryColor; // TODO: consider using gradients to ease transition
+      const trailNodeRadius = 2;
+
+      // TODO: consider using gradients to ease transition
+      c.strokeStyle = this.attributes.primaryColor;
       c.fillStyle = this.attributes.primaryColor;
       c.lineWidth = 1;
 
-      for (let i = 0; i < this._previousPositions.length; i++) {
-        const position = this._previousPositions[i];
-        trailRenderPos = Calculations.calculateRenderPos(position, camera);
-        c.lineTo(trailRenderPos.x, trailRenderPos.y);
-        c.fillRect(
-          trailRenderPos.x - trailNodeRadius * 0.5,
-          trailRenderPos.y - trailNodeRadius * 0.5,
-          trailNodeRadius,
-          trailNodeRadius,
+      let trailPosition: Vector2 | undefined;
+      let nextTrailPosition: Vector2 | undefined;
+
+      for (let i = 0; i < this._previousPositions.length - 1; i++) {
+        trailPosition = Calculations.calculateRenderPos(
+          this._previousPositions[i],
+          camera,
         );
+        nextTrailPosition = Calculations.calculateRenderPos(
+          this._previousPositions[i + 1],
+          camera,
+        );
+
+        // Change opacity depending on how old this position is
+        c.globalAlpha = (i + 1) / this._previousPositions.length;
+
+        c.beginPath();
+        c.moveTo(trailPosition.x, trailPosition.y);
+        c.lineTo(nextTrailPosition.x, nextTrailPosition.y);
+        c.stroke();
+        c.closePath();
+
+        if (GravitySimulation.settings.showTrailNodes) {
+          c.fillRect(
+            trailPosition.x - trailNodeRadius * 0.5,
+            trailPosition.y - trailNodeRadius * 0.5,
+            trailNodeRadius,
+            trailNodeRadius,
+          );
+        }
+
+        // Reset opacity
+        c.globalAlpha = 1;
       }
-      c.lineTo(renderPosition.x, renderPosition.y);
-      c.stroke();
-      c.closePath();
+
+      // Draw line to current position
+      if (nextTrailPosition) {
+        c.beginPath();
+        c.moveTo(nextTrailPosition.x, nextTrailPosition.y);
+        c.lineTo(renderPosition.x, renderPosition.y);
+        c.stroke();
+        c.closePath();
+      }
     };
 
     const draw = () => {
