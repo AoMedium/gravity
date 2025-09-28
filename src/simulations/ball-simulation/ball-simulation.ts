@@ -2,6 +2,10 @@ import Simulation from '@/features/simulation/models/simulation';
 import type { Ball } from './models/ball';
 
 export default class BallSimulation extends Simulation {
+  public init(): void {}
+  public handleInput(key: string): void {
+    console.log(key);
+  }
   ball: Ball;
 
   constructor(window: Window) {
