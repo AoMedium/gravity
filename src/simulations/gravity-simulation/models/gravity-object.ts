@@ -214,7 +214,7 @@ export class GravityObject extends Entity {
       const entity = GravitySimulation.entities[i];
 
       if (!(entity instanceof GravityObject) || this.id == entity.id) {
-        return;
+        continue;
       }
 
       const acceleration = Calculations.calculateAcceleration(
