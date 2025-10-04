@@ -1,16 +1,13 @@
 import Simulation from '@/features/simulation/models/simulation';
 import GravitySimulation from '../gravity-simulation';
-import { Calculations } from '../utils/calculations';
-import { Canvas } from '../utils/canvas';
-import Entity, { EntityAttributes, type EntityArgs } from './entity';
+import Calculations from '../utils/calculations';
+import Canvas from '../utils/canvas';
+import Entity from './entity';
 import Vector2 from './vector2';
+import { EntityAttributes } from './entity-attributes';
+import type GravityObjectDTO from './dto/gravity-object-dto';
 
-export type GravityObjectArgs = EntityArgs & {
-  mass: number;
-  attributes: EntityAttributes;
-};
-
-export class GravityObject extends Entity {
+export default class GravityObject extends Entity {
   private _mass: number;
   public attributes: EntityAttributes;
 
@@ -26,10 +23,10 @@ export class GravityObject extends Entity {
   private readonly DIAMOND_ANGLE_THRESHOLD: number =
     Calculations.radiansToDiamondAngle(Calculations.degreesToRadians(10));
 
-  constructor(args: GravityObjectArgs) {
-    super(args);
-    this._mass = args.mass;
-    this.attributes = args.attributes;
+  constructor(gravityObject: GravityObjectDTO) {
+    super(gravityObject);
+    this._mass = gravityObject.mass;
+    this.attributes = new EntityAttributes(gravityObject.attributes);
   }
 
   public update(): void {

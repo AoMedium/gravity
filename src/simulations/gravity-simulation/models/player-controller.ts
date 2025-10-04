@@ -1,7 +1,7 @@
-import type { Camera } from './camera';
+import type Camera from './camera';
 import Vector2 from './vector2';
 
-export class PlayerController {
+export default class PlayerController {
   private _cameras: Camera[] = [];
   private _activeCameraId: number = -1;
 

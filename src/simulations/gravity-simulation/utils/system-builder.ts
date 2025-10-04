@@ -1,46 +1,38 @@
-// import type { EntityAttributes } from '../models/entity';
-// import {
-//   GravityObject,
-//   type GravityObjectArgs,
-// } from '../models/gravity-object';
-// import { System } from '../models/system';
+import type SystemDTO from '../models/dto/system-dto';
+import GravityObject from '../models/gravity-object';
+import System from '../models/system';
 
-// export class SystemBuilder {
-//   private static deserializer(json: string, systemName: string): System {
-//     const parsedSystems: System[] = [];
+export default class SystemBuilder {
+  private static deserializer(json: string, systemName: string): System {
+    // const parsedSystems: System[] = [];
 
-//     const systemsJsonObj: System[] = JSON.parse(json).systems;
+    const systemsDTO: SystemDTO[] = JSON.parse(json).systems;
 
-//     const systemJsonObj: System = systemsJsonObj.find(
-//       (system) => system.name == systemName,
-//     );
-//     const parsedSystem: System = new System(systemJsonObj);
+    const systemDTO: SystemDTO | undefined = systemsDTO.find(
+      (system) => system.name == systemName,
+    );
 
-//     systemJsonObj.systemObjects.forEach((objJson) => {
-//       const attributes: EntityAttributes = new EntityAttributes(
-//         objJson.attributes,
-//       );
-//       attributes.distance *= parsedSystem.AU; // Convert distance to system AU
+    if (!systemDTO) {
+      throw new Error('Could not find system: ' + systemName);
+    }
 
-//       const args: GravityObjectArgs = {
-//         name: objJson.name,
-//         mass: objJson.mass,
-//         attributes: attributes,
-//       };
+    const parsedSystem = new System(systemDTO);
 
-//       console.log(attributes);
+    systemDTO.systemObjects.forEach((gravityObjectDTO) => {
+      const obj = new GravityObject(gravityObjectDTO);
+      obj.attributes.distance *= parsedSystem.AU; // Convert distance to system AU
 
-//       parsedSystem.add(new GravityObject(args));
-//     });
+      parsedSystem.add(obj);
+    });
 
-//     parsedSystem.calculateOrbits();
+    parsedSystem.calculateOrbits();
 
-//     return parsedSystem;
-//   }
+    return parsedSystem;
+  }
 
-//   public static createSystem(name: string): System {
-//     const system: System = SystemBuilder.deserializer(systemsJson, name);
+  public static createSystem(json: string, name: string): System {
+    const system: System = SystemBuilder.deserializer(json, name);
 
-//     return system;
-//   }
-// }
+    return system;
+  }
+}

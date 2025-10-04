@@ -1,6 +1,6 @@
 import type Vector2 from '../models/vector2';
 
-export class Canvas {
+export default class Canvas {
   public static isOutOfBounds(position: Vector2): boolean {
     return (
       position.x < 0 ||

@@ -1,8 +1,11 @@
 import { G, NON_ZERO_FACTOR } from '../constants';
-import type { Camera } from '../models/camera';
+import type Camera from '../models/camera';
+import type GravityObject from '../models/gravity-object';
+import type System from '../models/system';
 import Vector2 from '../models/vector2';
+import type { OrbitParams } from './orbit-params';
 
-export class Calculations {
+export default class Calculations {
   public static calculateRenderPos(position: Vector2, camera: Camera): Vector2 {
     const renderPosition = Vector2.scale(
       Vector2.subtract(position, camera.position),
@@ -28,45 +31,58 @@ export class Calculations {
     return Vector2.scale(direction, aMagnitude);
   }
 
-  //   public static calculateOrbitPosition(
-  //     system: System,
-  //     parentName: string,
-  //     satellite: GravityObject,
-  //   ): OrbitParams {
-  //     const isClockwise: boolean = false;
-  //     const angle: number = Math.random() * 2 * Math.PI;
+  public static calculateOrbitPosition(
+    system: System,
+    parentName: string,
+    satellite: GravityObject,
+  ): OrbitParams {
+    const isClockwise: boolean = false;
+    const angle: number = Math.random() * 2 * Math.PI;
 
-  //     const position: Vector2 = new Vector2();
-  //     const velocity: Vector2 = new Vector2();
+    const position: Vector2 = new Vector2();
+    const velocity: Vector2 = new Vector2();
 
-  //     const parent: GravityObject = system.systemObjects.find(
-  //       (obj) => obj.name == parentName,
-  //     );
+    const parent: GravityObject | undefined = system.systemObjects.find(
+      (obj) => obj.name == parentName,
+    );
 
-  //     position.x = Math.round(
-  //       satellite.attributes.distance * Math.cos(angle) + parent.position.x,
-  //     );
-  //     position.y = Math.round(
-  //       satellite.attributes.distance * Math.sin(angle) + parent.position.y,
-  //     );
+    if (!parent) {
+      throw new Error('Could not find parent object with name: ' + parentName);
+    }
 
-  //     const separation: number = Vector2.subtract(parent.position, position).magnitude();
-  //     const vScalar = Math.sqrt((G * parent.mass) / separation);
+    if (!satellite.attributes.distance) {
+      throw new Error(
+        'Distance was not provided for satellite: ' + satellite.name,
+      );
+    }
 
-  //     if (isClockwise) {
-  //       // Use 0 - - - 0 + + + graphing method to determine signs
+    position.x = Math.round(
+      satellite.attributes.distance * Math.cos(angle) + parent.position.x,
+    );
+    position.y = Math.round(
+      satellite.attributes.distance * Math.sin(angle) + parent.position.y,
+    );
 
-  //       velocity.x = vScalar * -Math.sin(angle);
-  //       velocity.y = vScalar * Math.cos(angle);
-  //     } else {
-  //       velocity.x = vScalar * Math.sin(angle);
-  //       velocity.y = vScalar * -Math.cos(angle);
-  //     }
+    const separation: number = Vector2.subtract(
+      parent.position,
+      position,
+    ).magnitude();
+    const vScalar = Math.sqrt((G * parent.mass) / separation);
 
-  //     velocity.add(parent.velocity);
+    if (isClockwise) {
+      // Use 0 - - - 0 + + + graphing method to determine signs
 
-  //     return { position, velocity };
-  //   }
+      velocity.x = vScalar * -Math.sin(angle);
+      velocity.y = vScalar * Math.cos(angle);
+    } else {
+      velocity.x = vScalar * Math.sin(angle);
+      velocity.y = vScalar * -Math.cos(angle);
+    }
+
+    velocity.add(parent.velocity);
+
+    return { position, velocity };
+  }
 
   public static degreesToRadians(deg: number): number {
     return deg * (Math.PI / 180);

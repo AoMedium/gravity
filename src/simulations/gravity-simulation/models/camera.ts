@@ -1,6 +1,6 @@
 import Vector2 from './vector2';
 
-export class Camera {
+export default class Camera {
   private _id: number;
   private _pos: Vector2;
   private _vel: Vector2 = Vector2.zero();
