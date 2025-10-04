@@ -82,6 +82,78 @@ export const systems = {
             distance: 0.002569,
           },
         },
+        {
+          name: 'Jaen',
+          mass: 110,
+          attributes: {
+            orbit: true,
+            distance: 1.524,
+            primaryColor: '#ff4400',
+          },
+        },
+        {
+          name: 'Ryin',
+          mass: 3,
+          attributes: {
+            orbit: true,
+            center: 'Jaen',
+            distance: 0.001,
+          },
+        },
+        {
+          name: 'Wira',
+          mass: 6,
+          attributes: {
+            orbit: true,
+            center: 'Jaen',
+            distance: 0.0025,
+          },
+        },
+        {
+          name: 'Veida',
+          mass: 40,
+          attributes: {
+            orbit: true,
+            distance: 2.8,
+            primaryColor: '#aaa',
+          },
+        },
+        {
+          name: 'Muerin',
+          mass: 317800,
+          attributes: {
+            orbit: true,
+            distance: 5.203,
+            primaryColor: '#ffcb00',
+          },
+        },
+        {
+          name: 'Leio',
+          mass: 10,
+          attributes: {
+            orbit: true,
+            center: 'Muerin',
+            distance: 0.03,
+          },
+        },
+        {
+          name: 'Rea',
+          mass: 17,
+          attributes: {
+            orbit: true,
+            center: 'Muerin',
+            distance: 0.055,
+          },
+        },
+        {
+          name: 'Mi',
+          mass: 12,
+          attributes: {
+            orbit: true,
+            center: 'Muerin',
+            distance: 0.01,
+          },
+        },
       ],
     },
   ],
