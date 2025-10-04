@@ -2,8 +2,8 @@ import Vector2 from './vector2';
 
 export default class Camera {
   private _id: number;
-  private _position: Vector2;
-  private _velocity: Vector2 = Vector2.zero();
+  public position: Vector2;
+  public velocity: Vector2 = Vector2.zero();
   private _scale: number = 1;
 
   private _useSmoothMovement: boolean = false;
@@ -15,26 +15,26 @@ export default class Camera {
 
   constructor(position?: Vector2) {
     this._id = Math.random();
-    this._position = position || Vector2.zero();
+    this.position = position || Vector2.zero();
   }
 
   public update(): void {
-    if (this._velocity.equals(Vector2.zero())) {
+    if (this.velocity.equals(Vector2.zero())) {
       return;
     }
 
     if (this._useSmoothMovement) {
       // Limit how small the velocity can go, based on scale
-      if (this._velocity.magnitude() < this.drag / this._scale) {
-        this._velocity = Vector2.zero();
+      if (this.velocity.magnitude() < this.drag / this._scale) {
+        this.velocity = Vector2.zero();
       } else {
-        this._velocity.scale(1 - this.drag);
+        this.velocity.scale(1 - this.drag);
       }
 
-      this._position.add(this._velocity);
+      this.position.add(this.velocity);
     } else {
-      this._position.add(Vector2.scale(this._velocity, this.staticMoveFactor));
-      this._velocity = Vector2.zero();
+      this.position.add(Vector2.scale(this.velocity, this.staticMoveFactor));
+      this.velocity = Vector2.zero();
     }
   }
 
@@ -45,21 +45,6 @@ export default class Camera {
   get id() {
     return this._id;
   }
-
-  get position() {
-    return this._position;
-  }
-  set position(position: Vector2) {
-    this._position = position;
-  }
-
-  get velocity() {
-    return this._velocity;
-  }
-  set velocity(velocity: Vector2) {
-    this._position = velocity;
-  }
-
   get scale() {
     return this._scale;
   }
