@@ -11,7 +11,11 @@ export default function InputManager(props: Props) {
   const dispatch = useDispatch();
 
   useEventListener('keydown', (event: KeyboardEvent) => {
-    props.simulation?.handleInput(event.key);
+    props.simulation?.keydown(event.key);
+  });
+
+  useEventListener('keyup', (event: KeyboardEvent) => {
+    props.simulation?.keyup(event.key);
   });
 
   return (

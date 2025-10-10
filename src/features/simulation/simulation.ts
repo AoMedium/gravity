@@ -23,5 +23,7 @@ export default abstract class Simulation {
 
   public abstract draw(context: CanvasRenderingContext2D): void;
 
-  public abstract handleInput(key: string): void;
+  public abstract keydown(key: string): void;
+
+  public abstract keyup(key: string): void;
 }

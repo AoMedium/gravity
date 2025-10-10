@@ -44,6 +44,8 @@ export default class GravitySimulation extends Simulation {
       camera.update();
     }
 
+    GravitySimulation.controller.handleInput();
+
     this.step++;
 
     this.updateOutputs();
@@ -63,8 +65,11 @@ export default class GravitySimulation extends Simulation {
     }
   }
 
-  public handleInput(key: string) {
-    GravitySimulation.controller.handleInput(key);
+  public keydown(key: string) {
+    GravitySimulation.controller.keydown(key);
+  }
+  public keyup(key: string) {
+    GravitySimulation.controller.keyup(key);
   }
 
   private updateOutputs() {

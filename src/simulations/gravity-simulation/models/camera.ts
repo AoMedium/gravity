@@ -6,10 +6,10 @@ export default class Camera {
   public velocity: Vector2 = Vector2.zero();
   private _scale: number = 1;
 
-  private _useSmoothMovement: boolean = false;
+  private _useSmoothMovement: boolean = true;
 
   // Drag for smooth movement
-  private readonly drag: number = 0.01;
+  private readonly drag: number = 0.1;
   // Scaled amount to move when useSmoothMovement is disabled
   private readonly staticMoveFactor = 20;
 

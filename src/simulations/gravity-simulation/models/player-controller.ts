@@ -5,8 +5,10 @@ export default class PlayerController {
   private _cameras: Camera[] = [];
   private _activeCameraId: number = -1;
 
-  private _moveStepSize: number = 0.5;
+  private _moveStepSize: number = 1;
   private _scaleMultiplier: number = 1.1;
+
+  private _activeKeys: Set<string> = new Set();
 
   constructor(camera: Camera) {
     this.addCamera(camera);
@@ -39,55 +41,69 @@ export default class PlayerController {
     this._cameras.push(camera);
   }
 
-  public handleInput(key: string) {
+  public keydown(key: string) {
+    this._activeKeys.add(key);
+  }
+
+  public keyup(key: string) {
+    this._activeKeys.delete(key);
+  }
+
+  public handleInput() {
+    if (this._activeKeys.size == 0) return;
+
     const camera = this.getActiveCamera();
     if (!camera) return;
 
     const cameraIndex = this.getActiveCameraIndex();
 
-    switch (key) {
-      case 'Down': // IE/Edge specific value
-      case 'ArrowDown':
-        this._cameras[cameraIndex].velocity.add(
-          new Vector2(0, this._moveStepSize / camera.scale),
-        );
-        break;
+    console.log(this._activeKeys);
 
-      case 'Up': // IE/Edge specific value
-      case 'ArrowUp':
-        this._cameras[cameraIndex].velocity.add(
-          new Vector2(0, -this._moveStepSize / camera.scale),
-        );
-        break;
+    for (const key of this._activeKeys) {
+      switch (key) {
+        case 'Down': // IE/Edge specific value
+        case 'ArrowDown':
+          this._cameras[cameraIndex].velocity.add(
+            new Vector2(0, this._moveStepSize / camera.scale),
+          );
+          break;
 
-      case 'Left': // IE/Edge specific value
-      case 'ArrowLeft':
-        this._cameras[cameraIndex].velocity.add(
-          new Vector2(-this._moveStepSize / camera.scale, 0),
-        );
-        break;
+        case 'Up': // IE/Edge specific value
+        case 'ArrowUp':
+          this._cameras[cameraIndex].velocity.add(
+            new Vector2(0, -this._moveStepSize / camera.scale),
+          );
+          break;
 
-      case 'Right': // IE/Edge specific value
-      case 'ArrowRight':
-        this._cameras[cameraIndex].velocity.add(
-          new Vector2(this._moveStepSize / camera.scale, 0),
-        );
-        break;
+        case 'Left': // IE/Edge specific value
+        case 'ArrowLeft':
+          this._cameras[cameraIndex].velocity.add(
+            new Vector2(-this._moveStepSize / camera.scale, 0),
+          );
+          break;
 
-      case '=':
-        this._cameras[cameraIndex].scale =
-          this._cameras[cameraIndex].scale * this._scaleMultiplier;
-        break;
-      case '-':
-        if (camera.scale / this._scaleMultiplier > 0.000001) {
+        case 'Right': // IE/Edge specific value
+        case 'ArrowRight':
+          this._cameras[cameraIndex].velocity.add(
+            new Vector2(this._moveStepSize / camera.scale, 0),
+          );
+          break;
+
+        case '=':
           this._cameras[cameraIndex].scale =
-            this._cameras[cameraIndex].scale / this._scaleMultiplier;
-        }
-        break;
+            this._cameras[cameraIndex].scale * this._scaleMultiplier;
+          break;
+        case '-':
+          if (camera.scale / this._scaleMultiplier > 0.000001) {
+            this._cameras[cameraIndex].scale =
+              this._cameras[cameraIndex].scale / this._scaleMultiplier;
+          }
+          break;
 
-      case 's':
-        this._cameras[cameraIndex].toggleSmoothMovement();
-        break;
+        case 's':
+          this._cameras[cameraIndex].toggleSmoothMovement();
+          break;
+      }
     }
   }
 }
