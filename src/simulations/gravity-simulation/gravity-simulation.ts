@@ -5,11 +5,20 @@ import PlayerController from './models/player-controller';
 import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
+import GravityOutputData from './models/gravity-output-data';
+import EventBus from '@/features/simulation/util/event-bus';
 
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
-  public static controller: PlayerController;
-  public static settings: Settings;
+  public static controller: PlayerController = new PlayerController(
+    new Camera(),
+  );
+  public static settings: Settings = {
+    showTrailNodes: false,
+  };
+  public static output: GravityOutputData = new GravityOutputData();
+
+  private step: number = 0;
 
   constructor(window: Window) {
     super(window);
@@ -17,18 +26,15 @@ export default class GravitySimulation extends Simulation {
 
   public init() {
     // TODO: need to make sure these functions can handle double calling from React
-    GravitySimulation.controller = new PlayerController(new Camera());
 
-    GravitySimulation.settings = {
-      showTrailNodes: false,
-    };
-
-    const basicSystem = SystemBuilder.createSystem(
+    const system = SystemBuilder.createSystem(
       JSON.stringify(systems),
       'Sol Alpha',
     );
 
-    GravitySimulation.entities = basicSystem.systemObjects;
+    GravitySimulation.entities = system.systemObjects;
+
+    EventBus.publish('updateSystem', system.name);
   }
 
   public update() {
@@ -40,6 +46,10 @@ export default class GravitySimulation extends Simulation {
     if (camera) {
       camera.update();
     }
+
+    this.step++;
+
+    this.updateOutputs();
   }
 
   public draw() {
@@ -58,5 +68,9 @@ export default class GravitySimulation extends Simulation {
 
   public handleInput(key: string) {
     GravitySimulation.controller.handleInput(key);
+  }
+
+  private updateOutputs() {
+    EventBus.publish('updateEntities', GravitySimulation.entities.length);
   }
 }

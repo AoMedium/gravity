@@ -1,5 +1,8 @@
+import OutputData from './output-data';
+
 export default abstract class Simulation {
   public static context: CanvasRenderingContext2D | null;
+  public static output: OutputData = new OutputData();
 
   private _window: Window;
   public fps: number;

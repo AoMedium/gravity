@@ -1,6 +1,7 @@
 import Canvas from '@/components/canvas/components/canvas';
 import { memo, useEffect, useRef } from 'react';
 import Simulation from '../models/simulation';
+import InfoView from './views/info-view';
 
 export interface Props {
   simulation: Simulation | null;
@@ -24,6 +25,7 @@ const SimulationView = memo(function SimulationView(props: Props) {
 
   return (
     <>
+      <InfoView />
       <Canvas canvas={canvas} draw={draw} />
     </>
   );
