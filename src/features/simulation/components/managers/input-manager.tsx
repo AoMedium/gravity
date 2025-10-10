@@ -11,10 +11,12 @@ export default function InputManager(props: Props) {
   const dispatch = useDispatch();
 
   useEventListener('keydown', (event: KeyboardEvent) => {
+    event.preventDefault();
     props.simulation?.keydown(event.key);
   });
 
   useEventListener('keyup', (event: KeyboardEvent) => {
+    event.preventDefault();
     props.simulation?.keyup(event.key);
   });
 

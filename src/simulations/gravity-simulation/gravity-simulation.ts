@@ -15,10 +15,14 @@ export default class GravitySimulation extends Simulation {
     showTrailNodes: false,
   };
 
-  private step: number = 0;
+  private static isPaused: boolean = false;
 
   constructor(window: Window) {
     super(window);
+  }
+
+  public static togglePaused() {
+    GravitySimulation.isPaused = !GravitySimulation.isPaused;
   }
 
   public init() {
@@ -35,8 +39,8 @@ export default class GravitySimulation extends Simulation {
   }
 
   public update() {
-    for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities[i].update();
+    if (!GravitySimulation.isPaused) {
+      this.physicsUpdate();
     }
 
     const camera = GravitySimulation.controller.getActiveCamera();
@@ -44,11 +48,14 @@ export default class GravitySimulation extends Simulation {
       camera.update();
     }
 
-    GravitySimulation.controller.handleInput();
-
-    this.step++;
-
+    GravitySimulation.controller.handleContinuousInput();
     this.updateOutputs();
+  }
+
+  private physicsUpdate() {
+    for (let i = 0; i < GravitySimulation.entities.length; i++) {
+      GravitySimulation.entities[i].update();
+    }
   }
 
   public draw() {
@@ -73,9 +80,9 @@ export default class GravitySimulation extends Simulation {
   }
 
   private updateOutputs() {
-    Simulation.eventBus.publish(
-      'updateEntities',
-      GravitySimulation.entities.length,
-    );
+    // Simulation.eventBus.publish(
+    //   'updateEntities',
+    //   GravitySimulation.entities.length,
+    // );
   }
 }

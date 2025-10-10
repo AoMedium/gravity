@@ -1,3 +1,4 @@
+import GravitySimulation from '../gravity-simulation';
 import type Camera from './camera';
 import Vector2 from './vector2';
 
@@ -43,21 +44,20 @@ export default class PlayerController {
 
   public keydown(key: string) {
     this._activeKeys.add(key);
+    this.handleSingleInput(key);
   }
 
   public keyup(key: string) {
     this._activeKeys.delete(key);
   }
 
-  public handleInput() {
+  public handleContinuousInput() {
     if (this._activeKeys.size == 0) return;
 
     const camera = this.getActiveCamera();
     if (!camera) return;
 
     const cameraIndex = this.getActiveCameraIndex();
-
-    console.log(this._activeKeys);
 
     for (const key of this._activeKeys) {
       switch (key) {
@@ -99,11 +99,24 @@ export default class PlayerController {
               this._cameras[cameraIndex].scale / this._scaleMultiplier;
           }
           break;
-
-        case 's':
-          this._cameras[cameraIndex].toggleSmoothMovement();
-          break;
       }
+    }
+  }
+
+  public handleSingleInput(key: string) {
+    const camera = this.getActiveCamera();
+    if (!camera) return;
+
+    const cameraIndex = this.getActiveCameraIndex();
+
+    switch (key) {
+      case 's':
+        this._cameras[cameraIndex].toggleSmoothMovement();
+        break;
+
+      case '/':
+        GravitySimulation.togglePaused();
+        break;
     }
   }
 }
