@@ -1,11 +1,9 @@
 import GravitySimulation from '../gravity-simulation';
-import type Camera from './camera';
-import CameraController from './camera-controller';
+import type CameraController from './camera-controller';
 import Vector2 from './vector2';
 
 export default class PlayerController {
-  private _cameraController: CameraController = new CameraController();
-
+  private _cameraController: CameraController;
   private _moveStepSize: number = 1;
   private _scaleMultiplier: number = 1.1;
 
@@ -13,9 +11,8 @@ export default class PlayerController {
 
   private _isTargeting: boolean = false;
 
-  constructor(camera: Camera) {
-    this._cameraController.addCamera(camera);
-    this._cameraController.setActiveCamera(camera.id);
+  constructor(cameraController: CameraController) {
+    this._cameraController = cameraController;
   }
 
   public keydown(key: string) {
@@ -30,7 +27,7 @@ export default class PlayerController {
   public handleContinuousInput() {
     if (this._activeKeys.size == 0) return;
 
-    const camera = this._cameraController.getActiveCamera();
+    const camera = this._cameraController.getActiveItem();
     if (!camera) return;
 
     for (const key of this._activeKeys) {
@@ -80,7 +77,7 @@ export default class PlayerController {
   }
 
   public handleSingleInput(key: string) {
-    const camera = this._cameraController.getActiveCamera();
+    const camera = this._cameraController.getActiveItem();
     if (!camera) return;
 
     switch (key) {

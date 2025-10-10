@@ -5,12 +5,18 @@ import PlayerController from './models/player-controller';
 import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
+import CameraController from './models/camera-controller';
 
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
-  public static controller: PlayerController = new PlayerController(
+
+  public static cameraController: CameraController = new CameraController(
     new Camera(),
   );
+  public static playerController: PlayerController = new PlayerController(
+    GravitySimulation.cameraController,
+  );
+
   public static settings: Settings = {
     showTrailNodes: false,
   };
@@ -43,12 +49,12 @@ export default class GravitySimulation extends Simulation {
       this.physicsUpdate();
     }
 
-    const camera = GravitySimulation.controller.getActiveCamera();
+    const camera = GravitySimulation.cameraController.getActiveItem();
     if (camera) {
       camera.update();
     }
 
-    GravitySimulation.controller.handleContinuousInput();
+    GravitySimulation.playerController.handleContinuousInput();
     this.updateOutputs();
   }
 
@@ -73,10 +79,10 @@ export default class GravitySimulation extends Simulation {
   }
 
   public keydown(key: string) {
-    GravitySimulation.controller.keydown(key);
+    GravitySimulation.playerController.keydown(key);
   }
   public keyup(key: string) {
-    GravitySimulation.controller.keyup(key);
+    GravitySimulation.playerController.keyup(key);
   }
 
   private updateOutputs() {

@@ -36,14 +36,14 @@ export default class GravityObject extends Entity {
     this.gravitate();
     this.updateRadiusByMass();
 
-    const camera = GravitySimulation.controller.getActiveCamera();
+    const camera = GravitySimulation.cameraController.getActiveItem();
     if (camera) {
       this.updateRecordedPositions(camera.scale);
     }
   }
 
   public draw(): void {
-    const camera = GravitySimulation.controller.getActiveCamera();
+    const camera = GravitySimulation.cameraController.getActiveItem();
     if (!camera) return;
 
     const c = Simulation.context;
