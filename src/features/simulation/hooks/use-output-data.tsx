@@ -6,13 +6,12 @@ export default function useOutputData<T>(key: string) {
 
   useEffect(() => {
     const callback = (data: unknown) => {
-      console.log(data);
       setValue(data as T); // TODO: consider whether this is appropriate casting
     };
 
     EventBus.subscribe(key, callback);
 
-    return EventBus.unsubscribe(key, callback);
+    return () => EventBus.unsubscribe(key, callback);
   }, [key]);
 
   return value;

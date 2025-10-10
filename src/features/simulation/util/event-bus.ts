@@ -9,7 +9,6 @@ export default class EventBus {
 
     const event = EventBus._events.get(name);
 
-    console.info('Subscribed', name, callback);
     event!.push(callback);
   }
 
@@ -30,8 +29,8 @@ export default class EventBus {
   }
 
   public static publish(name: string, data: unknown) {
-    console.log('Publish', name, data);
     const event = EventBus._events.get(name);
+
     if (event) {
       event.forEach((callback) => callback(data));
     }
