@@ -1,17 +1,17 @@
 type IDItem = { id: number };
 
 export default class CycleList<T extends IDItem> {
-  private _items: T[] = [];
+  public items: T[] = [];
   private _activeIndex: number = -1;
 
   public getActiveItem(): T | undefined {
     if (this._activeIndex == -1) return undefined;
 
-    return this._items[this._activeIndex];
+    return this.items[this._activeIndex];
   }
 
   private getItemIndexById(id: number) {
-    const index = this._items.findIndex((item) => item.id == id);
+    const index = this.items.findIndex((item) => item.id == id);
 
     if (index == -1) {
       console.error('Could not find item with index', id);
@@ -32,15 +32,18 @@ export default class CycleList<T extends IDItem> {
       console.error(`Item with ID ${item.id} already added to controller.`);
       return;
     }
-    this._items.push(item);
+    this.items.push(item);
   }
 
-  public remove(id: number) {
-    // TODO: implement
+  public remove(id: number): T | undefined {
+    const index = this.getItemIndexById(id);
+    if (!index) return;
+
+    return this.items.splice(index, 1)[0];
   }
 
   public increment() {
-    if (this._activeIndex < this._items.length - 1) {
+    if (this._activeIndex < this.items.length - 1) {
       this._activeIndex++;
     } else {
       this._activeIndex = 0;
@@ -51,7 +54,7 @@ export default class CycleList<T extends IDItem> {
     if (this._activeIndex > 0) {
       this._activeIndex--;
     } else {
-      this._activeIndex = this._items.length;
+      this._activeIndex = this.items.length;
     }
   }
 }
