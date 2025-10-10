@@ -1,6 +1,6 @@
 import Canvas from '@/components/canvas/components/canvas';
 import { memo, useEffect, useRef } from 'react';
-import Simulation from '../models/simulation';
+import Simulation from '../simulation';
 import InfoView from './views/info-view';
 
 export interface Props {

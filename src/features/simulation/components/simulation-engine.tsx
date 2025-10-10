@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import type Simulation from '../models/simulation';
+import type Simulation from '../simulation';
 import SimulationManagers from './simulation-managers';
 import { useDispatch } from 'react-redux';
 import {

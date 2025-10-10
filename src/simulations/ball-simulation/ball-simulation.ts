@@ -1,4 +1,4 @@
-import Simulation from '@/features/simulation/models/simulation';
+import Simulation from '@/features/simulation/simulation';
 import type { Ball } from './models/ball';
 
 export default class BallSimulation extends Simulation {

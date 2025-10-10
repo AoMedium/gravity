@@ -1,5 +1,5 @@
 import UpdateManager from './managers/update-manager';
-import type Simulation from '../models/simulation';
+import type Simulation from '../simulation';
 import InputManager from './managers/input-manager';
 import { memo } from 'react';
 

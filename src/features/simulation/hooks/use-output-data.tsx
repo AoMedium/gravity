@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Simulation from '../models/simulation';
+import Simulation from '../simulation';
 
 export default function useOutputData<T>(key: string) {
   const [value, setValue] = useState<T>();

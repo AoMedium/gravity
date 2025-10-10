@@ -1,4 +1,4 @@
-import Simulation from '@/features/simulation/models/simulation';
+import Simulation from '@/features/simulation/simulation';
 import GravitySimulation from '../gravity-simulation';
 import Calculations from '../utils/calculations';
 import Canvas from '../utils/canvas';

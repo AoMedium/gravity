@@ -1,4 +1,4 @@
-import Simulation from '@/features/simulation/models/simulation';
+import Simulation from '@/features/simulation/simulation';
 import type Entity from './models/entity';
 import Camera from './models/camera';
 import PlayerController from './models/player-controller';
