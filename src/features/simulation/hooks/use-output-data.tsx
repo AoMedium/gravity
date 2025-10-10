@@ -1,5 +1,5 @@
+import EventBus from '@/features/events/event-bus';
 import { useEffect, useState } from 'react';
-import EventBus from '../util/event-bus';
 
 export default function useOutputData<T>(key: string) {
   const [value, setValue] = useState<T>();

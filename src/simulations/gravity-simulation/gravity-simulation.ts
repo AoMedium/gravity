@@ -6,7 +6,7 @@ import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
 import GravityOutputData from './models/gravity-output-data';
-import EventBus from '@/features/simulation/util/event-bus';
+import EventBus from '@/features/events/event-bus';
 
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
