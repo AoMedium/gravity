@@ -16,6 +16,8 @@ export default function SimulationEngine() {
   const simulation = useRef<Simulation>(null);
 
   useEffect(() => {
+    // TODO: need to make this component generic and move this logic to App
+
     // simulation.current = new BallSimulation(window);
     simulation.current = new GravitySimulation(window);
     simulation.current.fps = 10;

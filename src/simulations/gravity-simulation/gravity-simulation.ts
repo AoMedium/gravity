@@ -6,7 +6,6 @@ import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
 import GravityOutputData from './models/gravity-output-data';
-import EventBus from '@/features/events/event-bus';
 
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
@@ -34,7 +33,7 @@ export default class GravitySimulation extends Simulation {
 
     GravitySimulation.entities = system.systemObjects;
 
-    EventBus.publish('updateSystem', system.name);
+    Simulation.eventBus.publish('updateSystem', system.name);
   }
 
   public update() {
@@ -71,6 +70,9 @@ export default class GravitySimulation extends Simulation {
   }
 
   private updateOutputs() {
-    EventBus.publish('updateEntities', GravitySimulation.entities.length);
+    Simulation.eventBus.publish(
+      'updateEntities',
+      GravitySimulation.entities.length,
+    );
   }
 }

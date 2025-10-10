@@ -1,8 +1,9 @@
-import OutputData from './output-data';
+import EventBus from '@/features/events/event-bus';
 
+// TODO: consider whether this should be a singleton
 export default abstract class Simulation {
   public static context: CanvasRenderingContext2D | null;
-  public static output: OutputData = new OutputData();
+  public static eventBus: EventBus = EventBus.getInstance();
 
   private _window: Window;
   public fps: number;
