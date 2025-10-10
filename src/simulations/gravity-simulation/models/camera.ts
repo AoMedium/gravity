@@ -1,3 +1,4 @@
+import type Entity from './entity';
 import Vector2 from './vector2';
 
 export default class Camera {
@@ -7,6 +8,8 @@ export default class Camera {
   private _scale: number = 1;
 
   private _useSmoothMovement: boolean = true;
+
+  public target: Entity | undefined;
 
   // Drag for smooth movement
   private readonly drag: number = 0.1;
@@ -42,17 +45,21 @@ export default class Camera {
     this._useSmoothMovement = !this._useSmoothMovement;
   }
 
-  get id() {
+  public get id() {
     return this._id;
   }
-  get scale() {
+  public get scale() {
     return this._scale;
   }
-  set scale(scale: number) {
+  public set scale(scale: number) {
     if (scale <= 0) {
       console.error('Cannot have a scale less than 0');
       return;
     }
     this._scale = scale;
+  }
+
+  public clearTarget() {
+    this.target = undefined;
   }
 }
