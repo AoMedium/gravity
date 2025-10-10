@@ -1,7 +1,7 @@
 import { start, stop } from '@/state/simulation/simulation-slice';
 import { useDispatch } from 'react-redux';
 import useEventListener from '../../hooks/use-event-listener';
-import type Simulation from '../../models/simulation';
+import type Simulation from '../../simulation';
 
 interface Props {
   simulation: Simulation | null;

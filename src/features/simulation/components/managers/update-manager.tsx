@@ -1,7 +1,7 @@
 import type { RootState } from '@/state/store';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import type Simulation from '../../models/simulation';
+import type Simulation from '../../simulation';
 
 interface Props {
   simulation: Simulation | null;

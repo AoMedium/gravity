@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type Simulation from '../models/simulation';
+import type Simulation from '../simulation';
 import type { RootState } from '@/state/store';
 
 export default function useInterval(
