@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Simulation from '../simulation';
 
-export default function useOutputData<T>(key: string) {
+export default function useSubscription<T>(key: string) {
   const [value, setValue] = useState<T>();
 
   useEffect(() => {

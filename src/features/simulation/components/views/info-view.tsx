@@ -1,8 +1,8 @@
-import useOutputData from '../../hooks/use-output-data';
+import useSubscription from '../../hooks/use-subscription';
 
 export default function InfoView() {
-  const system = useOutputData<string>('updateSystem');
-  const entities = useOutputData<number>('updateEntities');
+  const system = useSubscription<string>('updateSystem');
+  const entities = useSubscription<number>('updateEntities');
 
   return (
     <div style={{ color: 'white' }}>
