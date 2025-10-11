@@ -6,8 +6,6 @@ import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
 import CameraController from './models/camera-controller';
-import GravityObject from './models/gravity-object';
-import type GravityObjectDTO from './models/dto/gravity-object-dto';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
@@ -47,37 +45,8 @@ export default class GravitySimulation extends Simulation {
       'Sol Alpha',
     );
 
-    GravitySimulation.entities.push(
-      new GravityObject({
-        name: 'Sol Alpha',
-        mass: 59600000,
-        position: {
-          x: 0,
-          y: 0,
-        },
-        attributes: {
-          fixed: true,
-          primaryColor: '#fff',
-        },
-      } as GravityObjectDTO),
-      new GravityObject({
-        name: 'Kas',
-        mass: 55,
-        position: {
-          x: 500,
-          y: 0,
-        },
-        velocity: {
-          x: 0,
-          y: -10,
-        },
-        attributes: {
-          orbit: true,
-          distance: 0.387,
-          primaryColor: '#aaa',
-        },
-      } as GravityObjectDTO),
-    ); //system.systemObjects;
+    // Push items as we should only modify the original array and keep its reference
+    GravitySimulation.entities.push(...system.systemObjects);
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
