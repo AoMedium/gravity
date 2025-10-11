@@ -100,9 +100,9 @@ export default class PlayerController {
         this._isTargeting = !this._isTargeting;
 
         if (this._isTargeting) {
-          camera.clearTarget();
-        } else {
           camera.target = this._targets.getActiveItem();
+        } else {
+          camera.clearTarget();
         }
         break;
 
