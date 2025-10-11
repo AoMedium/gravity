@@ -22,22 +22,10 @@ export default class Camera {
   }
 
   public update(): void {
-    if (this.velocity.equals(Vector2.zero())) {
-      return;
-    }
-
-    if (this._useSmoothMovement) {
-      // Limit how small the velocity can go, based on scale
-      if (this.velocity.magnitude() < this.drag / this._scale) {
-        this.velocity = Vector2.zero();
-      } else {
-        this.velocity.scale(1 - this.drag);
-      }
-
-      this.position.add(this.velocity);
+    if (this.target) {
+      this.position = this.target.position.copy(); // Create new Vector2 rather than assign, as position is a ref
     } else {
-      this.position.add(Vector2.scale(this.velocity, this.staticMoveFactor));
-      this.velocity = Vector2.zero();
+      this.updateVelocity();
     }
   }
 
@@ -61,5 +49,25 @@ export default class Camera {
 
   public clearTarget() {
     this.target = undefined;
+  }
+
+  private updateVelocity() {
+    if (this.velocity.equals(Vector2.zero())) {
+      return;
+    }
+
+    if (this._useSmoothMovement) {
+      // Limit how small the velocity can go, based on scale
+      if (this.velocity.magnitude() < this.drag / this._scale) {
+        this.velocity = Vector2.zero();
+      } else {
+        this.velocity.scale(1 - this.drag);
+      }
+
+      this.position.add(this.velocity);
+    } else {
+      this.position.add(Vector2.scale(this.velocity, this.staticMoveFactor));
+      this.velocity = Vector2.zero();
+    }
   }
 }

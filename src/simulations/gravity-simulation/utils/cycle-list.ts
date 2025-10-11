@@ -10,19 +10,9 @@ export default class CycleList<T extends IDItem> {
     return this.items[this._activeIndex];
   }
 
-  private getItemIndexById(id: number) {
-    const index = this.items.findIndex((item) => item.id == id);
-
-    if (index == -1) {
-      console.error('Could not find item with index', id);
-      return;
-    }
-    return index;
-  }
-
   public setActiveItem(id: number) {
     const index = this.getItemIndexById(id);
-    if (!index) return;
+    if (index == -1) return;
 
     this._activeIndex = index;
   }
@@ -37,7 +27,7 @@ export default class CycleList<T extends IDItem> {
 
   public remove(id: number): T | undefined {
     const index = this.getItemIndexById(id);
-    if (!index) return;
+    if (index == -1) return;
 
     return this.items.splice(index, 1)[0];
   }
@@ -54,7 +44,11 @@ export default class CycleList<T extends IDItem> {
     if (this._activeIndex > 0) {
       this._activeIndex--;
     } else {
-      this._activeIndex = this.items.length;
+      this._activeIndex = this.items.length - 1;
     }
+  }
+
+  private getItemIndexById(id: number) {
+    return this.items.findIndex((item) => item.id == id);
   }
 }

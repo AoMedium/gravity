@@ -1,5 +1,7 @@
 import GravitySimulation from '../gravity-simulation';
+import CycleList from '../utils/cycle-list';
 import type CameraController from './camera-controller';
+import type Entity from './entity';
 import Vector2 from './vector2';
 
 export default class PlayerController {
@@ -9,10 +11,12 @@ export default class PlayerController {
 
   private _activeKeys: Set<string> = new Set();
 
+  private _targets: CycleList<Entity> = new CycleList();
   private _isTargeting: boolean = false;
 
-  constructor(cameraController: CameraController) {
+  constructor(cameraController: CameraController, targets: Entity[]) {
     this._cameraController = cameraController;
+    this._targets.items = targets; // FIXME: targets.items does not change when targets is updated external to this class
   }
 
   public keydown(key: string) {
@@ -82,7 +86,6 @@ export default class PlayerController {
 
     switch (key) {
       case '[':
-        // TODO: cycle between cameras
         this._cameraController.decrement();
         break;
 
@@ -92,6 +95,15 @@ export default class PlayerController {
 
       case 's':
         camera.toggleSmoothMovement();
+        break;
+      case 't':
+        this._isTargeting = !this._isTargeting;
+
+        if (this._isTargeting) {
+          camera.clearTarget();
+        } else {
+          camera.target = this._targets.getActiveItem();
+        }
         break;
 
       case '/':
@@ -103,10 +115,14 @@ export default class PlayerController {
       switch (key) {
         case 'Left': // IE/Edge specific value
         case 'ArrowLeft':
+          this._targets.decrement();
+          camera.target = this._targets.getActiveItem();
           break;
 
         case 'Right': // IE/Edge specific value
         case 'ArrowRight':
+          this._targets.increment();
+          camera.target = this._targets.getActiveItem();
           break;
       }
     }

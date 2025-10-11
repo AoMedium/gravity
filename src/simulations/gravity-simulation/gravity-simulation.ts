@@ -6,7 +6,10 @@ import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
 import CameraController from './models/camera-controller';
+import GravityObject from './models/gravity-object';
+import type GravityObjectDTO from './models/dto/gravity-object-dto';
 
+// TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
   public static entities: Entity[] = [];
 
@@ -15,6 +18,7 @@ export default class GravitySimulation extends Simulation {
   );
   public static playerController: PlayerController = new PlayerController(
     GravitySimulation.cameraController,
+    GravitySimulation.entities,
   );
 
   public static settings: Settings = {
@@ -22,6 +26,7 @@ export default class GravitySimulation extends Simulation {
   };
 
   private static isPaused: boolean = false;
+  private static isInitialized: boolean = false;
 
   constructor(window: Window) {
     super(window);
@@ -32,16 +37,51 @@ export default class GravitySimulation extends Simulation {
   }
 
   public init() {
-    // TODO: need to make sure these functions can handle double calling from React
+    // Ensures that initialization only occurs once per instance (handles double calling from React)
+    if (GravitySimulation.isInitialized) {
+      return;
+    }
 
     const system = SystemBuilder.createSystem(
       JSON.stringify(systems),
       'Sol Alpha',
     );
 
-    GravitySimulation.entities = system.systemObjects;
+    GravitySimulation.entities.push(
+      new GravityObject({
+        name: 'Sol Alpha',
+        mass: 59600000,
+        position: {
+          x: 0,
+          y: 0,
+        },
+        attributes: {
+          fixed: true,
+          primaryColor: '#fff',
+        },
+      } as GravityObjectDTO),
+      new GravityObject({
+        name: 'Kas',
+        mass: 55,
+        position: {
+          x: 500,
+          y: 0,
+        },
+        velocity: {
+          x: 0,
+          y: -10,
+        },
+        attributes: {
+          orbit: true,
+          distance: 0.387,
+          primaryColor: '#aaa',
+        },
+      } as GravityObjectDTO),
+    ); //system.systemObjects;
 
     Simulation.eventBus.publish('updateSystem', system.name);
+
+    GravitySimulation.isInitialized = true;
   }
 
   public update() {
