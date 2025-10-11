@@ -24,7 +24,6 @@ export default class GravitySimulation extends Simulation {
   };
 
   private static isPaused: boolean = false;
-  private static isInitialized: boolean = false;
 
   constructor(window: Window) {
     super(window);
@@ -36,7 +35,7 @@ export default class GravitySimulation extends Simulation {
 
   public init() {
     // Ensures that initialization only occurs once per instance (handles double calling from React)
-    if (GravitySimulation.isInitialized) {
+    if (Simulation.isInitialized) {
       return;
     }
 
@@ -50,7 +49,7 @@ export default class GravitySimulation extends Simulation {
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
-    GravitySimulation.isInitialized = true;
+    Simulation.isInitialized = true;
   }
 
   public update() {
