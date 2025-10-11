@@ -103,6 +103,7 @@ export default class PlayerController {
           camera.target = this._targets.getActiveItem();
         } else {
           camera.clearTarget();
+          camera.velocity = Vector2.zero();
         }
         break;
 
