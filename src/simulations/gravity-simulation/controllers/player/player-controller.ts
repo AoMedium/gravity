@@ -3,8 +3,10 @@ import type Entity from '../../models/entity/entity';
 import Vector2 from '../../models/vector2';
 import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
+import PlayerKeyBinds from './player-keybinds';
 
 export default class PlayerController {
+  private _keyBinds: PlayerKeyBinds = new PlayerKeyBinds();
   private _cameraController: CameraController;
   private _moveStepSize: number = 1;
   private _scaleMultiplier: number = 1.1;
@@ -20,12 +22,13 @@ export default class PlayerController {
   }
 
   public keydown(key: string) {
-    this._activeKeys.add(key);
+    if (this._activeKeys.has(key)) return;
+
     this.handleSingleInput(key);
   }
 
   public keyup(key: string) {
-    this._activeKeys.delete(key);
+    this.unlockKey(key);
   }
 
   public handleContinuousInput() {
@@ -48,29 +51,22 @@ export default class PlayerController {
 
       if (!this._isTargeting) {
         switch (key) {
-          case 'Down': // IE/Edge specific value
-          case 'ArrowDown':
+          case this._keyBinds.camera.moveDown.key:
             camera.velocity.add(
               new Vector2(0, this._moveStepSize / camera.scale),
             );
             break;
-
-          case 'Up': // IE/Edge specific value
-          case 'ArrowUp':
+          case this._keyBinds.camera.moveUp.key:
             camera.velocity.add(
               new Vector2(0, -this._moveStepSize / camera.scale),
             );
             break;
-
-          case 'Left': // IE/Edge specific value
-          case 'ArrowLeft':
+          case this._keyBinds.camera.moveLeft.key:
             camera.velocity.add(
               new Vector2(-this._moveStepSize / camera.scale, 0),
             );
             break;
-
-          case 'Right': // IE/Edge specific value
-          case 'ArrowRight':
+          case this._keyBinds.camera.moveRight.key:
             camera.velocity.add(
               new Vector2(this._moveStepSize / camera.scale, 0),
             );
@@ -81,22 +77,29 @@ export default class PlayerController {
   }
 
   public handleSingleInput(key: string) {
+    // Lock and unlock key so that we do not process single inputs for a key multiple times
+    if (this._activeKeys.has(key)) {
+      return;
+    } else {
+      this.lockKey(key);
+    }
+
     const camera = this._cameraController.getActiveItem();
     if (!camera) return;
 
     switch (key) {
-      case '[':
+      case this._keyBinds.camera.previousCamera.key:
         this._cameraController.decrement();
         break;
 
-      case ']':
+      case this._keyBinds.camera.nextCamera.key:
         this._cameraController.increment();
         break;
 
-      case 's':
+      case this._keyBinds.camera.toggleSmoothMovement.key:
         camera.toggleSmoothMovement();
         break;
-      case 't':
+      case this._keyBinds.camera.toggleTargeting.key:
         this._isTargeting = !this._isTargeting;
 
         if (this._isTargeting) {
@@ -107,25 +110,31 @@ export default class PlayerController {
         }
         break;
 
-      case '/':
+      case this._keyBinds.simulation.togglePause.key:
         GravitySimulation.togglePaused();
         break;
     }
 
     if (this._isTargeting) {
       switch (key) {
-        case 'Left': // IE/Edge specific value
-        case 'ArrowLeft':
+        case this._keyBinds.camera.previousTarget.key:
           this._targets.decrement();
           camera.target = this._targets.getActiveItem();
           break;
 
-        case 'Right': // IE/Edge specific value
-        case 'ArrowRight':
+        case this._keyBinds.camera.nextTarget.key:
           this._targets.increment();
           camera.target = this._targets.getActiveItem();
           break;
       }
     }
+  }
+
+  private lockKey(key: string) {
+    this._activeKeys.add(key);
+  }
+
+  private unlockKey(key: string) {
+    this._activeKeys.delete(key);
   }
 }
