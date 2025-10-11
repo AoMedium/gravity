@@ -1,11 +1,11 @@
 import Simulation from '@/features/simulation/simulation';
-import type Entity from './models/entity';
-import Camera from './models/camera';
-import PlayerController from './models/player-controller';
-import type Settings from './models/settings';
 import SystemBuilder from './utils/system-builder';
 import { systems } from './data/systems';
-import CameraController from './models/camera-controller';
+import Camera from './controllers/camera/camera';
+import CameraController from './controllers/camera/camera-controller';
+import PlayerController from './controllers/player/player-controller';
+import type Entity from './models/entity/entity';
+import type Settings from './models/system/settings';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {

@@ -1,7 +1,7 @@
 import { G, NON_ZERO_FACTOR } from '../constants';
-import type Camera from '../models/camera';
-import type GravityObject from '../models/gravity-object';
-import type System from '../models/system';
+import type Camera from '../controllers/camera/camera';
+import type GravityObject from '../models/entity/gravity-object';
+import type System from '../models/system/system';
 import Vector2 from '../models/vector2';
 import type { OrbitParams } from './orbit-params';
 

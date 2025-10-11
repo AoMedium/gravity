@@ -1,11 +1,11 @@
 import Simulation from '@/features/simulation/simulation';
-import GravitySimulation from '../gravity-simulation';
-import Calculations from '../utils/calculations';
-import Canvas from '../utils/canvas';
+import GravitySimulation from '../../gravity-simulation';
+import Calculations from '../../utils/calculations';
+import Canvas from '../../utils/canvas';
+import type GravityObjectDTO from '../dto/gravity-object-dto';
+import Vector2 from '../vector2';
 import Entity from './entity';
-import Vector2 from './vector2';
 import { EntityAttributes } from './entity-attributes';
-import type GravityObjectDTO from './dto/gravity-object-dto';
 
 export default class GravityObject extends Entity {
   private _mass: number;

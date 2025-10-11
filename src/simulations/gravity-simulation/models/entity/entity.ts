@@ -1,5 +1,5 @@
-import type { EntityDTO } from './dto/entity-dto';
-import Vector2 from './vector2';
+import type { EntityDTO } from '../dto/entity-dto';
+import Vector2 from '../vector2';
 
 export default abstract class Entity {
   public readonly id: number;

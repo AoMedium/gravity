@@ -1,6 +1,6 @@
 import type SystemDTO from '../models/dto/system-dto';
-import GravityObject from '../models/gravity-object';
-import System from '../models/system';
+import GravityObject from '../models/entity/gravity-object';
+import System from '../models/system/system';
 
 export default class SystemBuilder {
   private static deserializer(json: string, systemName: string): System {

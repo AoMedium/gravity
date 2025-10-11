@@ -1,5 +1,5 @@
-import type Entity from './entity';
-import Vector2 from './vector2';
+import type Entity from '../../models/entity/entity';
+import Vector2 from '../../models/vector2';
 
 export default class Camera {
   private _id: number;

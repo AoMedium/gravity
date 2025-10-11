@@ -1,8 +1,8 @@
-import GravitySimulation from '../gravity-simulation';
-import CycleList from '../utils/cycle-list';
-import type CameraController from './camera-controller';
-import type Entity from './entity';
-import Vector2 from './vector2';
+import GravitySimulation from '../../gravity-simulation';
+import type Entity from '../../models/entity/entity';
+import Vector2 from '../../models/vector2';
+import CycleList from '../../utils/cycle-list';
+import type CameraController from '../camera/camera-controller';
 
 export default class PlayerController {
   private _cameraController: CameraController;
