@@ -5,6 +5,8 @@ import Vector2 from '../../models/vector2';
 import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
 import PlayerKeyBinds from './player-keybinds';
+import Canvas from '../../utils/canvas';
+import GravityObject from '../../models/entity/gravity-object';
 
 export default class PlayerController implements InputHandler {
   private _keyBinds: PlayerKeyBinds = new PlayerKeyBinds();
@@ -30,6 +32,19 @@ export default class PlayerController implements InputHandler {
 
   public keyup(key: string) {
     this.unlockKey(key);
+  }
+
+  public mousedown(event: MouseEvent) {
+    const camera = this._cameraController.getActiveItem();
+    if (!camera) return;
+
+    const position = Canvas.getPhysicalPosition(
+      new Vector2(event.clientX, event.clientY),
+      camera,
+    );
+    GravitySimulation.entities.add(
+      new GravityObject({ name: 'Roid', position: position, mass: 10 }),
+    );
   }
 
   public handleContinuousInput() {

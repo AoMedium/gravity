@@ -16,10 +16,10 @@ export default function InputManager() {
     Simulation.inputHandler.keyup(event.key);
   });
 
-  // useEventListener('mousedown', (event: KeyboardEvent) => {
-  //   event.preventDefault();
-  //   props.simulation?.mousedown(event.key);
-  // });
+  useEventListener('mousedown', (event: MouseEvent) => {
+    event.preventDefault();
+    Simulation.inputHandler.mousedown(event);
+  });
 
   return (
     <>

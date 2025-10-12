@@ -5,7 +5,7 @@ import type GravityObject from '../entity/gravity-object';
 
 export default class System {
   name: string;
-  center?: string;
+  center: string | undefined;
   AU: number;
   systemObjects: GravityObject[] = [];
 

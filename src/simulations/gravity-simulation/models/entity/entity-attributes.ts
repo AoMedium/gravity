@@ -7,11 +7,13 @@ export class EntityAttributes {
   distance: number = 0;
   primaryColor: string = '#fff';
 
-  constructor(attributes: EntityAttributesDTO) {
-    this.fixed = (attributes && attributes.fixed) || false;
-    this.orbit = (attributes && attributes.orbit) || false;
-    this.center = (attributes && attributes.center) || undefined;
-    this.distance = (attributes && attributes.distance) || 0;
-    this.primaryColor = (attributes && attributes.primaryColor) || '#fff';
+  constructor(attributes: EntityAttributesDTO | undefined) {
+    if (!attributes) return;
+
+    this.fixed = attributes.fixed || false;
+    this.orbit = attributes.orbit || false;
+    this.center = attributes.center || undefined;
+    this.distance = attributes.distance || 0;
+    this.primaryColor = attributes.primaryColor || '#fff';
   }
 }
