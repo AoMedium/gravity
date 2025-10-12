@@ -1,21 +1,10 @@
 import { G, NON_ZERO_FACTOR } from '../constants';
-import type Camera from '../controllers/camera/camera';
 import type GravityObject from '../models/entity/gravity-object';
 import type System from '../models/system/system';
 import Vector2 from '../models/vector2';
 import type { OrbitParams } from './orbit-params';
 
 export default class Calculations {
-  public static calculateRenderPos(position: Vector2, camera: Camera): Vector2 {
-    const renderPosition = Vector2.scale(
-      Vector2.subtract(position, camera.position),
-      camera.scale,
-    );
-    renderPosition.add(new Vector2(innerWidth / 2, innerHeight / 2));
-
-    return renderPosition;
-  }
-
   public static calculateAcceleration(
     displacement: Vector2,
     mass: number,

@@ -51,7 +51,7 @@ export default class GravityObject extends Entity {
 
     const scale = camera.scale;
 
-    const renderPosition: Vector2 = Calculations.calculateRenderPos(
+    const renderPosition: Vector2 = Canvas.getRenderPosition(
       this.position,
       camera,
     );
@@ -146,11 +146,11 @@ export default class GravityObject extends Entity {
       let nextTrailPosition: Vector2 | undefined;
 
       for (let i = 0; i < this._previousPositions.length - 1; i++) {
-        trailPosition = Calculations.calculateRenderPos(
+        trailPosition = Canvas.getRenderPosition(
           this._previousPositions[i],
           camera,
         );
-        nextTrailPosition = Calculations.calculateRenderPos(
+        nextTrailPosition = Canvas.getRenderPosition(
           this._previousPositions[i + 1],
           camera,
         );
