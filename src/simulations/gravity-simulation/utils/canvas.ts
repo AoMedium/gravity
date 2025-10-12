@@ -29,10 +29,9 @@ export default class Canvas {
 
     renderPosition.y *= -1; // As canvas draws from top to bottom, invert y-axis so that y increases bottom to top
 
-    const position = Vector2.scale(
-      Vector2.subtract(renderPosition, camera.position),
-      1 / camera.scale,
-    );
+    renderPosition.scale(1 / camera.scale);
+
+    const position = Vector2.add(renderPosition, camera.position);
 
     return position;
   }

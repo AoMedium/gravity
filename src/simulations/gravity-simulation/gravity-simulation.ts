@@ -21,7 +21,9 @@ export default class GravitySimulation extends Simulation {
   );
 
   public static settings: Settings = {
+    showTrails: false,
     showTrailNodes: false,
+    collisionMode: 'distributive',
   };
 
   private static isPaused: boolean = false;
@@ -44,7 +46,9 @@ export default class GravitySimulation extends Simulation {
 
     const system = SystemBuilder.createSystem(
       JSON.stringify(systems),
-      'Sol Alpha',
+      'Empty System',
+      // 'Basic System',
+      //'Sol Alpha',
     );
 
     // Push items as we should only modify the original array and keep its reference

@@ -42,6 +42,7 @@ export default class PlayerController implements InputHandler {
       new Vector2(event.clientX, event.clientY),
       camera,
     );
+
     GravitySimulation.entities.add(
       new GravityObject({ name: 'Roid', position: position, mass: 10 }),
     );

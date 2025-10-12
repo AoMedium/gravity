@@ -1,6 +1,11 @@
 export const systems = {
   systems: [
     {
+      name: 'Empty System',
+
+      systemObjects: [],
+    },
+    {
       name: 'Basic System',
       center: 'Star',
       AU: 5000,

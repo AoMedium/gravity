@@ -11,7 +11,7 @@ export default class GravityObject extends Entity {
   private _mass: number;
   public attributes: EntityAttributes;
 
-  private _radius: number = 0;
+  public radius: number = 0;
 
   private _previousPositions: Vector2[] = [];
   private _maxPosEntries: number = 20;
@@ -33,7 +33,8 @@ export default class GravityObject extends Entity {
     if (!this.attributes.fixed) {
       this.position.add(this.velocity);
     }
-    this.gravitate();
+
+    this.compare();
     this.updateRadiusByMass();
 
     const camera = GravitySimulation.cameraController.getActiveItem();
@@ -65,7 +66,7 @@ export default class GravityObject extends Entity {
       c.beginPath();
       c.fillStyle = this.attributes.primaryColor;
 
-      if (this._radius * scale < this.MIN_DOT_SIZE) {
+      if (this.radius * scale < this.MIN_DOT_SIZE) {
         c.arc(
           renderPosition.x,
           renderPosition.y,
@@ -77,7 +78,7 @@ export default class GravityObject extends Entity {
         c.arc(
           renderPosition.x,
           renderPosition.y,
-          this._radius * scale,
+          this.radius * scale,
           0,
           2 * Math.PI,
         );
@@ -89,8 +90,8 @@ export default class GravityObject extends Entity {
 
     const drawText = () => {
       let tagOffset: Vector2 = new Vector2(
-        this._radius * scale,
-        this._radius * scale * 2,
+        this.radius * scale,
+        this.radius * scale * 2,
       );
 
       if (tagOffset.x < this.MIN_TAG_OFFSET) {
@@ -188,7 +189,7 @@ export default class GravityObject extends Entity {
     };
 
     const draw = () => {
-      drawTrail();
+      if (GravitySimulation.settings.showTrails) drawTrail();
       drawBody();
       drawText();
     };
@@ -202,24 +203,113 @@ export default class GravityObject extends Entity {
       // delete
       //entities.splice(searchForEntity(this.id), 1); //perhaps implement queue to lessen calls
     } else {
-      this._radius = Math.pow((3 * this.mass) / (Math.PI * 4), 1 / 3) * 0.1;
+      this.radius = Math.pow((3 * this.mass) / (Math.PI * 4), 1 / 3) * 0.1;
     }
   }
 
-  private gravitate(): void {
+  private compare() {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      const entity = GravitySimulation.entities.getIndex(i);
+      const object = GravitySimulation.entities.getIndex(i);
 
-      if (!(entity instanceof GravityObject) || this.id == entity.id) {
+      if (!(object instanceof GravityObject) || this.id == object.id) {
         continue;
       }
 
-      const acceleration = Calculations.calculateAcceleration(
-        Vector2.subtract(this.position, entity.position),
-        (entity as GravityObject).mass,
-      );
-      this.velocity.add(acceleration);
+      // TODO: cache calculation
+      const separation = Vector2.subtract(
+        this.position,
+        object.position,
+      ).magnitude();
+
+      if (separation < object.radius + this.radius) {
+        this.handleCollision(object);
+      } else {
+        this.gravitate(object);
+      }
     }
+  }
+
+  private handleCollision(object: GravityObject) {
+    if (this.mass < object.mass) return;
+
+    switch (GravitySimulation.settings.collisionMode) {
+      case 'absorb':
+        if (!this.attributes.fixed) {
+          //&& this.type != negative_matter) {
+
+          const totalMomentum = Vector2.add(
+            Vector2.scale(this.velocity, this.mass),
+            Vector2.scale(object.velocity, object.mass),
+          );
+
+          this.velocity = Vector2.scale(
+            totalMomentum,
+            1 / (this.mass + object.mass),
+          );
+        }
+
+        // if (
+        //   this.type == negative_matter ||
+        //   entities[i].type == negative_matter
+        // ) {
+        //   this.mass -= this.thatMass;
+        // } else {
+        this.mass += object.mass;
+        // }
+
+        // if (this.type == star && entities[i].type == star) {
+        //   this.type = negative_matter;
+        //   this.typeFixed = true;
+        //   this.id += ' + ' + entities[i].id;
+        // }
+
+        //console.log("collide: " + this.id + " absorbs " + entities[i].id);
+
+        GravitySimulation.entities.remove(object.id);
+        break;
+
+      case 'distributive':
+        if (!this.attributes.fixed) {
+          // && this.type != negative_matter) {
+
+          /**
+           * Elastic head-on collision
+           * <http://hyperphysics.phy-astr.gsu.edu/hbase/colsta.html#c5>
+           */
+
+          object.velocity = Vector2.subtract(
+            Vector2.scale(
+              this.velocity,
+              (2 * this.mass) / (this.mass + object.mass),
+            ),
+            Vector2.scale(
+              object.velocity,
+              (this.mass - object.mass) / (this.mass + object.mass),
+            ),
+          );
+
+          this.velocity = Vector2.subtract(
+            Vector2.scale(
+              this.velocity,
+              (this.mass - object.mass) / (this.mass + object.mass),
+            ),
+            Vector2.scale(
+              object.velocity,
+              (2 * this.mass) / (this.mass + object.mass),
+            ),
+          );
+        }
+
+        break;
+    }
+  }
+
+  private gravitate(object: GravityObject): void {
+    const acceleration = Calculations.calculateAcceleration(
+      Vector2.subtract(this.position, object.position),
+      object.mass,
+    );
+    this.velocity.add(acceleration);
   }
 
   private updateRecordedPositions(scale: number): void {
