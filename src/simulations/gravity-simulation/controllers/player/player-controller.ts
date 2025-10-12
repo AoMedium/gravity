@@ -54,12 +54,12 @@ export default class PlayerController implements InputHandler {
         switch (key) {
           case this._keyBinds.camera.moveDown.key:
             camera.velocity.add(
-              new Vector2(0, this._moveStepSize / camera.scale),
+              new Vector2(0, -this._moveStepSize / camera.scale),
             );
             break;
           case this._keyBinds.camera.moveUp.key:
             camera.velocity.add(
-              new Vector2(0, -this._moveStepSize / camera.scale),
+              new Vector2(0, this._moveStepSize / camera.scale),
             );
             break;
           case this._keyBinds.camera.moveLeft.key:

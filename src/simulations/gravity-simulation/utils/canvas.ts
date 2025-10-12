@@ -16,7 +16,10 @@ export default class Canvas {
       Vector2.subtract(position, camera.position),
       camera.scale,
     );
-    renderPosition.add(new Vector2(innerWidth / 2, innerHeight / 2));
+
+    renderPosition.y *= -1; // As canvas draws from top to bottom, invert y-axis so that y increases bottom to top
+
+    renderPosition.add(new Vector2(innerWidth / 2, innerHeight / 2)); // Move origin (0,0) to centre of canvas
 
     return renderPosition;
   }
