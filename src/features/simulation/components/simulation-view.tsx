@@ -25,8 +25,8 @@ const SimulationView = memo(function SimulationView(props: Props) {
 
   return (
     <>
-      <InfoView />
       <Canvas canvas={canvas} draw={draw} />
+      <InfoView />
     </>
   );
 });
