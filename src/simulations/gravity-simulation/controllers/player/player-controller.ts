@@ -19,7 +19,7 @@ export default class PlayerController implements InputHandler {
 
   constructor(cameraController: CameraController, targets: Entity[]) {
     this._cameraController = cameraController;
-    this._targets.items = targets; // FIXME: targets.items does not change when targets is updated external to this class
+    this._targets.setRef(targets);
   }
 
   public keydown(key: string) {

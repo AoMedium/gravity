@@ -1,4 +1,4 @@
-import type EntityAttributesDTO from './dto/entity-attributes-dto';
+import type EntityAttributesDTO from '../dto/entity-attributes-dto';
 
 export class EntityAttributes {
   fixed: boolean = false;

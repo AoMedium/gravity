@@ -6,17 +6,18 @@ import CameraController from './controllers/camera/camera-controller';
 import PlayerController from './controllers/player/player-controller';
 import type Entity from './models/entity/entity';
 import type Settings from './models/system/settings';
+import List from './utils/list';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
-  public static entities: Entity[] = [];
+  public static entities: List<Entity> = new List();
 
   public static cameraController: CameraController = new CameraController(
     new Camera(),
   );
   public static playerController: PlayerController = new PlayerController(
     GravitySimulation.cameraController,
-    GravitySimulation.entities,
+    GravitySimulation.entities.getRef(),
   );
 
   public static settings: Settings = {
@@ -47,7 +48,7 @@ export default class GravitySimulation extends Simulation {
     );
 
     // Push items as we should only modify the original array and keep its reference
-    GravitySimulation.entities.push(...system.systemObjects);
+    GravitySimulation.entities.getRef().push(...system.systemObjects);
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
@@ -70,7 +71,7 @@ export default class GravitySimulation extends Simulation {
 
   private physicsUpdate() {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities[i].update();
+      GravitySimulation.entities.getIndex(i).update();
     }
   }
 
@@ -84,7 +85,7 @@ export default class GravitySimulation extends Simulation {
     );
 
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities[i].draw();
+      GravitySimulation.entities.getIndex(i).draw();
     }
   }
 

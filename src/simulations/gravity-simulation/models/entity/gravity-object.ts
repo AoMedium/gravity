@@ -208,7 +208,7 @@ export default class GravityObject extends Entity {
 
   private gravitate(): void {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      const entity = GravitySimulation.entities[i];
+      const entity = GravitySimulation.entities.getIndex(i);
 
       if (!(entity instanceof GravityObject) || this.id == entity.id) {
         continue;
