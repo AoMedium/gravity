@@ -11,7 +11,7 @@ const SimulationManagers = memo(function SimulationManagers(props: Props) {
   return (
     <>
       <UpdateManager simulation={props.simulation} />
-      <InputManager simulation={props.simulation} />
+      <InputManager />
     </>
   );
 });

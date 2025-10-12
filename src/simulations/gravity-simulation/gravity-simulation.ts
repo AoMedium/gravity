@@ -39,6 +39,8 @@ export default class GravitySimulation extends Simulation {
       return;
     }
 
+    Simulation.inputHandler = GravitySimulation.playerController; // TODO: consider using dependency injection instead
+
     const system = SystemBuilder.createSystem(
       JSON.stringify(systems),
       'Sol Alpha',
@@ -84,13 +86,6 @@ export default class GravitySimulation extends Simulation {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       GravitySimulation.entities[i].draw();
     }
-  }
-
-  public keydown(key: string) {
-    GravitySimulation.playerController.keydown(key);
-  }
-  public keyup(key: string) {
-    GravitySimulation.playerController.keyup(key);
   }
 
   private updateOutputs() {

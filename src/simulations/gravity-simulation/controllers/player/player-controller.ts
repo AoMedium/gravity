@@ -1,3 +1,4 @@
+import type InputHandler from '@/features/simulation/util/input-handler';
 import GravitySimulation from '../../gravity-simulation';
 import type Entity from '../../models/entity/entity';
 import Vector2 from '../../models/vector2';
@@ -5,7 +6,7 @@ import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
 import PlayerKeyBinds from './player-keybinds';
 
-export default class PlayerController {
+export default class PlayerController implements InputHandler {
   private _keyBinds: PlayerKeyBinds = new PlayerKeyBinds();
   private _cameraController: CameraController;
   private _moveStepSize: number = 1;
