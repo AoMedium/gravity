@@ -2,11 +2,9 @@ type IDItem = { id: number };
 
 export default class CycleList<T extends IDItem> {
   public items: T[] = [];
-  private _activeIndex: number = -1;
+  private _activeIndex: number = 0;
 
   public getActiveItem(): T | undefined {
-    if (this._activeIndex == -1) return undefined;
-
     return this.items[this._activeIndex];
   }
 
