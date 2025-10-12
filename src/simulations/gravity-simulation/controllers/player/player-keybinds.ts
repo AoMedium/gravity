@@ -13,6 +13,9 @@ class CameraKeyBinds {
   moveLeft: KeyBind = new KeyBind('ArrowLeft', 'Move Left');
   moveRight: KeyBind = new KeyBind('ArrowRight', 'Move Right');
 
+  zoomIn: KeyBind = new KeyBind('=', 'Zoom In');
+  zoomOut: KeyBind = new KeyBind('-', 'Zoom Out');
+
   previousCamera: KeyBind = new KeyBind('[', 'Previous Camera');
   nextCamera: KeyBind = new KeyBind(']', 'Next Camera');
 

@@ -39,10 +39,10 @@ export default class PlayerController {
 
     for (const key of this._activeKeys) {
       switch (key) {
-        case '=':
+        case this._keyBinds.camera.zoomIn.key:
           camera.scale = camera.scale * this._scaleMultiplier;
           break;
-        case '-':
+        case this._keyBinds.camera.zoomOut.key:
           if (camera.scale / this._scaleMultiplier > 0.000001) {
             camera.scale = camera.scale / this._scaleMultiplier;
           }
