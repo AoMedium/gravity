@@ -2,6 +2,7 @@ import type { RootState } from '@/state/store';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import useResize from '../hooks/use-resize';
+import Simulation from '@/features/simulation/simulation';
 
 const allowResizing = false;
 
@@ -33,6 +34,22 @@ export default function Canvas(props: CanvasProps) {
   // TODO: apply resize rerender only after a few seconds to avoid rerendering during resizing
   // TODO: see if its possible to freeze-frame while resizing to avoid flickering
   useResize(props.canvas.current, width, height);
+
+  useEffect(() => {
+    if (!props.canvas.current) return;
+
+    const handleMousedown = (event: MouseEvent) => {
+      Simulation.inputHandler.mousedown(event);
+    };
+
+    props.canvas.current.addEventListener('mousedown', handleMousedown);
+
+    return () => {
+      if (props.canvas.current) {
+        props.canvas.current.removeEventListener('mousedown', handleMousedown);
+      }
+    };
+  }, [props.canvas]);
 
   useEffect(() => {
     // Get the canvas and its 2D rendering context.
