@@ -4,12 +4,14 @@ import type Entity from '../../models/entity/entity';
 import Vector2 from '../../models/vector2';
 import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
-import PlayerKeyBinds from './player-keybinds';
+import PlayerControls from './player-controls';
 import Canvas from '../../utils/canvas';
 import GravityObject from '../../models/entity/gravity-object';
+import type Control from '@/features/simulation/util/control';
 
 export default class PlayerController implements InputHandler {
-  private _keyBinds: PlayerKeyBinds = new PlayerKeyBinds();
+  public controls: PlayerControls = new PlayerControls();
+
   private _cameraController: CameraController;
   private _moveStepSize: number = 1;
   private _scaleMultiplier: number = 1.1;
@@ -25,13 +27,20 @@ export default class PlayerController implements InputHandler {
   }
 
   public keydown(key: string) {
-    if (this._activeKeys.has(key)) return;
-
+    if (this._activeKeys.has(key)) {
+      return;
+    } else {
+      this.lockKey(key);
+    }
     this.handleSingleInput(key);
   }
 
   public keyup(key: string) {
     this.unlockKey(key);
+  }
+
+  public trigger(control: Control) {
+    this.handleSingleInput(control.key);
   }
 
   public mousedown(event: MouseEvent) {
@@ -56,10 +65,10 @@ export default class PlayerController implements InputHandler {
 
     for (const key of this._activeKeys) {
       switch (key) {
-        case this._keyBinds.camera.zoomIn.key:
+        case this.controls.camera.zoomIn.key:
           camera.scale = camera.scale * this._scaleMultiplier;
           break;
-        case this._keyBinds.camera.zoomOut.key:
+        case this.controls.camera.zoomOut.key:
           if (camera.scale / this._scaleMultiplier > 0.000001) {
             camera.scale = camera.scale / this._scaleMultiplier;
           }
@@ -68,22 +77,22 @@ export default class PlayerController implements InputHandler {
 
       if (!this._isTargeting) {
         switch (key) {
-          case this._keyBinds.camera.moveDown.key:
+          case this.controls.camera.moveDown.key:
             camera.velocity.add(
               new Vector2(0, -this._moveStepSize / camera.scale),
             );
             break;
-          case this._keyBinds.camera.moveUp.key:
+          case this.controls.camera.moveUp.key:
             camera.velocity.add(
               new Vector2(0, this._moveStepSize / camera.scale),
             );
             break;
-          case this._keyBinds.camera.moveLeft.key:
+          case this.controls.camera.moveLeft.key:
             camera.velocity.add(
               new Vector2(-this._moveStepSize / camera.scale, 0),
             );
             break;
-          case this._keyBinds.camera.moveRight.key:
+          case this.controls.camera.moveRight.key:
             camera.velocity.add(
               new Vector2(this._moveStepSize / camera.scale, 0),
             );
@@ -95,28 +104,23 @@ export default class PlayerController implements InputHandler {
 
   public handleSingleInput(key: string) {
     // Lock and unlock key so that we do not process single inputs for a key multiple times
-    if (this._activeKeys.has(key)) {
-      return;
-    } else {
-      this.lockKey(key);
-    }
 
     const camera = this._cameraController.getActiveItem();
     if (!camera) return;
 
     switch (key) {
-      case this._keyBinds.camera.previousCamera.key:
+      case this.controls.camera.previousCamera.key:
         this._cameraController.decrement();
         break;
 
-      case this._keyBinds.camera.nextCamera.key:
+      case this.controls.camera.nextCamera.key:
         this._cameraController.increment();
         break;
 
-      case this._keyBinds.camera.toggleSmoothMovement.key:
+      case this.controls.camera.toggleSmoothMovement.key:
         camera.toggleSmoothMovement();
         break;
-      case this._keyBinds.camera.toggleTargeting.key:
+      case this.controls.camera.toggleTargeting.key:
         this._isTargeting = !this._isTargeting;
 
         if (this._isTargeting) {
@@ -127,19 +131,24 @@ export default class PlayerController implements InputHandler {
         }
         break;
 
-      case this._keyBinds.simulation.togglePause.key:
+      case this.controls.simulation.togglePause.key:
         GravitySimulation.togglePaused();
+        break;
+
+      case this.controls.simulation.toggleTrails.key:
+        GravitySimulation.settings.showTrails =
+          !GravitySimulation.settings.showTrails;
         break;
     }
 
     if (this._isTargeting) {
       switch (key) {
-        case this._keyBinds.camera.previousTarget.key:
+        case this.controls.camera.previousTarget.key:
           this._targets.decrement();
           camera.target = this._targets.getActiveItem();
           break;
 
-        case this._keyBinds.camera.nextTarget.key:
+        case this.controls.camera.nextTarget.key:
           this._targets.increment();
           camera.target = this._targets.getActiveItem();
           break;
