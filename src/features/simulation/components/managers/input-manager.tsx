@@ -16,15 +16,22 @@ export default function InputManager() {
     Simulation.inputHandler.keyup(event.key);
   });
 
-  useEventListener('mousedown', (event: MouseEvent) => {
-    event.preventDefault();
-    Simulation.inputHandler.mousedown(event);
-  });
-
   return (
     <>
       <button onClick={() => dispatch(start())}>Start</button>
       <button onClick={() => dispatch(stop())}>Stop</button>
+
+      {/* Changing controls will rerender the component */}
+      {Simulation.controls.map((control, index) => (
+        <button
+          key={index}
+          onClick={() => {
+            Simulation.inputHandler.trigger(control);
+          }}
+        >
+          {control.functionality}
+        </button>
+      ))}
     </>
   );
 }

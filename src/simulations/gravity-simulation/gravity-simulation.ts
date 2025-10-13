@@ -23,7 +23,7 @@ export default class GravitySimulation extends Simulation {
   public static settings: Settings = {
     showTrails: false,
     showTrailNodes: false,
-    collisionMode: 'distributive',
+    collisionMode: 'absorb',
   };
 
   private static isPaused: boolean = false;
@@ -46,9 +46,9 @@ export default class GravitySimulation extends Simulation {
 
     const system = SystemBuilder.createSystem(
       JSON.stringify(systems),
-      'Empty System',
+      // 'Empty System',
       // 'Basic System',
-      //'Sol Alpha',
+      'Sol Alpha',
     );
 
     // Push items as we should only modify the original array and keep its reference
@@ -56,7 +56,13 @@ export default class GravitySimulation extends Simulation {
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
+    Simulation.setControls(
+      GravitySimulation.playerController.controls.simulation.toggleTrails,
+      GravitySimulation.playerController.controls.simulation.togglePause,
+    );
+
     Simulation.isInitialized = true;
+    Simulation.eventBus.publish('initSimulation', Date.now());
   }
 
   public update() {
