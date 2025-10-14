@@ -1,14 +1,15 @@
+import { IDItem } from '../../utils/list';
 import type { EntityDTO } from '../dto/entity-dto';
 import Vector2 from '../vector2';
 
-export default abstract class Entity {
-  public readonly id: number;
+export default abstract class Entity extends IDItem {
   public readonly name: string;
   public position: Vector2;
   public velocity: Vector2;
 
   constructor(entity: EntityDTO) {
-    this.id = Math.random();
+    super();
+
     this.name = entity.name || 'Unnamed Entity';
     this.position = entity.position
       ? new Vector2(entity.position.x, entity.position.y)

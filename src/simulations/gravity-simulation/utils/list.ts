@@ -1,4 +1,10 @@
-export type IDItem = { id: number };
+export abstract class IDItem {
+  public id: number = -1;
+
+  constructor() {
+    this.id = Math.random();
+  }
+}
 
 export default class List<T extends IDItem> {
   protected items: T[] = [];

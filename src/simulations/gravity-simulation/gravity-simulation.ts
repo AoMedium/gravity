@@ -7,10 +7,12 @@ import PlayerController from './controllers/player/player-controller';
 import type Entity from './models/entity/entity';
 import type Settings from './models/system/settings';
 import List from './utils/list';
+import type Effect from './models/overlay/effect';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
   public static entities: List<Entity> = new List();
+  public static effects: List<Effect> = new List();
 
   public static cameraController: CameraController = new CameraController(
     new Camera(),
@@ -83,6 +85,10 @@ export default class GravitySimulation extends Simulation {
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       GravitySimulation.entities.getIndex(i).update();
     }
+
+    for (let i = 0; i < GravitySimulation.effects.length; i++) {
+      GravitySimulation.effects.getIndex(i).update();
+    }
   }
 
   public draw() {
@@ -96,6 +102,10 @@ export default class GravitySimulation extends Simulation {
 
     for (let i = 0; i < GravitySimulation.entities.length; i++) {
       GravitySimulation.entities.getIndex(i).draw();
+    }
+
+    for (let i = 0; i < GravitySimulation.effects.length; i++) {
+      GravitySimulation.effects.getIndex(i).draw();
     }
   }
 

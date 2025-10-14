@@ -6,6 +6,7 @@ import type GravityObjectDTO from '../dto/gravity-object-dto';
 import Vector2 from '../vector2';
 import Entity from './entity';
 import { EntityAttributes } from './entity-attributes';
+import Shockwave from '../overlay/effects/shockwave';
 
 export default class GravityObject extends Entity {
   private _mass: number;
@@ -302,6 +303,15 @@ export default class GravityObject extends Entity {
 
         break;
     }
+
+    GravitySimulation.effects.add(
+      new Shockwave(
+        20,
+        new Vector2(object.position.x, object.position.y),
+        new Vector2(this.velocity.x, this.velocity.y),
+        object.radius * 5,
+      ),
+    );
   }
 
   private gravitate(object: GravityObject): void {
