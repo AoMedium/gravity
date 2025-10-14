@@ -233,6 +233,14 @@ export default class GravityObject extends Entity {
   private handleCollision(object: GravityObject) {
     if (this.mass < object.mass) return;
 
+    // const reboundVelocity = Vector2.subtract(
+    //   Vector2.scale(this.velocity, (2 * this.mass) / (this.mass + object.mass)),
+    //   Vector2.scale(
+    //     object.velocity,
+    //     (this.mass - object.mass) / (this.mass + object.mass),
+    //   ),
+    // );
+
     switch (GravitySimulation.settings.collisionMode) {
       case 'absorb':
         if (!this.attributes.fixed) {
@@ -304,12 +312,15 @@ export default class GravityObject extends Entity {
         break;
     }
 
+    const kineticEnergy = (object.mass * object.velocity.magnitude() ** 2) / 2;
+
     GravitySimulation.effects.add(
       new Shockwave(
-        20,
+        10,
         new Vector2(object.position.x, object.position.y),
         new Vector2(this.velocity.x, this.velocity.y),
-        object.radius * 5,
+        // reboundVelocity.magnitude() * 10, // TODO: should this be based off of how fast the rebound is?
+        kineticEnergy * 0.1,
       ),
     );
   }
