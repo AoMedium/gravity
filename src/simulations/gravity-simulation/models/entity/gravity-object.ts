@@ -9,7 +9,7 @@ import { EntityAttributes } from './entity-attributes';
 import Shockwave from '../overlay/effects/shockwave';
 
 export default class GravityObject extends Entity {
-  private _mass: number;
+  public mass: number;
   public attributes: EntityAttributes;
 
   public radius: number = 0;
@@ -26,7 +26,7 @@ export default class GravityObject extends Entity {
 
   constructor(gravityObject: GravityObjectDTO) {
     super(gravityObject);
-    this._mass = gravityObject.mass;
+    this.mass = gravityObject.mass;
     this.attributes = new EntityAttributes(gravityObject.attributes);
   }
 
@@ -382,12 +382,5 @@ export default class GravityObject extends Entity {
     if (hasExceededPositionThreshold()) {
       recordNewPosition(this.position);
     }
-  }
-
-  public get mass() {
-    return this._mass;
-  }
-  public set mass(mass: number) {
-    this._mass = mass;
   }
 }
