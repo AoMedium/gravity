@@ -1,7 +1,5 @@
-export default class Settings {
-  public showTrails: boolean = false;
-  public showTrailNodes: boolean = false;
-  public collisionMode: CollisionMode = 'absorb';
-}
+import GravityObjectSettings from './settings/gravity-object-settings';
 
-export type CollisionMode = 'absorb' | 'distributive';
+export default class Settings {
+  public gravityObject: GravityObjectSettings = new GravityObjectSettings();
+}

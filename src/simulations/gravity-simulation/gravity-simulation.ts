@@ -5,15 +5,15 @@ import Camera from './controllers/camera/camera';
 import CameraController from './controllers/camera/camera-controller';
 import PlayerController from './controllers/player/player-controller';
 import type Entity from './models/entity/entity';
-import type Settings from './models/system/settings';
+import Settings from './models/system/settings';
 import List from './utils/list';
-import type Effect from './models/overlay/effect';
+import EffectsController from './controllers/effects/effects-controller';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
   public static entities: List<Entity> = new List();
-  public static effects: List<Effect> = new List();
 
+  public static effectsController: EffectsController = new EffectsController();
   public static cameraController: CameraController = new CameraController(
     new Camera(),
   );
@@ -22,11 +22,7 @@ export default class GravitySimulation extends Simulation {
     GravitySimulation.entities.getRef(),
   );
 
-  public static settings: Settings = {
-    showTrails: false,
-    showTrailNodes: false,
-    collisionMode: 'absorb',
-  };
+  public static settings: Settings = new Settings();
 
   private static isPaused: boolean = false;
 
@@ -86,8 +82,12 @@ export default class GravitySimulation extends Simulation {
       GravitySimulation.entities.getIndex(i).update();
     }
 
-    for (let i = 0; i < GravitySimulation.effects.length; i++) {
-      GravitySimulation.effects.getIndex(i).update();
+    for (
+      let i = 0;
+      i < GravitySimulation.effectsController.effects.length;
+      i++
+    ) {
+      GravitySimulation.effectsController.effects.getIndex(i).update();
     }
   }
 
@@ -104,8 +104,12 @@ export default class GravitySimulation extends Simulation {
       GravitySimulation.entities.getIndex(i).draw();
     }
 
-    for (let i = 0; i < GravitySimulation.effects.length; i++) {
-      GravitySimulation.effects.getIndex(i).draw();
+    for (
+      let i = 0;
+      i < GravitySimulation.effectsController.effects.length;
+      i++
+    ) {
+      GravitySimulation.effectsController.effects.getIndex(i).draw();
     }
   }
 

@@ -1,7 +1,7 @@
 import Simulation from '@/features/simulation/simulation';
 import GravitySimulation from '../../gravity-simulation';
 import Calculations from '../../utils/calculations';
-import Canvas from '../../utils/canvas';
+import Canvas, { type CanvasText } from '../../utils/canvas';
 import type GravityObjectDTO from '../dto/gravity-object-dto';
 import Vector2 from '../vector2';
 import Entity from './entity';
@@ -28,6 +28,10 @@ export default class GravityObject extends Entity {
     super(gravityObject);
     this.mass = gravityObject.mass;
     this.attributes = new EntityAttributes(gravityObject.attributes);
+  }
+
+  public get type() {
+    return 'undefined'; // TODO: abstract
   }
 
   public update(): void {
@@ -90,6 +94,25 @@ export default class GravityObject extends Entity {
     };
 
     const drawText = () => {
+      const spacing = 12;
+      const labels: CanvasText[] = [];
+
+      const labelTypes = {
+        name: {
+          value: this.name,
+          bold: true,
+          fillColor: this.attributes.primaryColor,
+        } as CanvasText,
+        typeAndMass: {
+          value: `  ${this.type} / ${Math.round(this.mass)}`,
+        } as CanvasText,
+        position: {
+          value: `  (${Math.round(this.position.x)}, ${Math.round(
+            this.position.y,
+          )})`,
+        } as CanvasText,
+      };
+
       let tagOffset: Vector2 = new Vector2(
         this.radius * scale,
         this.radius * scale * 2,
@@ -99,37 +122,30 @@ export default class GravityObject extends Entity {
         tagOffset = new Vector2(this.MIN_TAG_OFFSET, this.MIN_TAG_OFFSET * 2);
       }
 
-      const indent: Vector2 = new Vector2(5, 10); // TODO: check if it is more performant to have unchanging function constants inside or outside loop
+      switch (GravitySimulation.settings.gravityObject.labelMode) {
+        case 'minimal':
+          labels.push(labelTypes.name);
+          break;
+        case 'basic':
+          labels.push(labelTypes.name, labelTypes.typeAndMass);
+          break;
+        case 'complete':
+          labels.push(
+            labelTypes.name,
+            labelTypes.typeAndMass,
+            labelTypes.position,
+          );
+          break;
+      }
 
-      c.beginPath();
+      for (let i = 0; i < labels.length; i++) {
+        const position = new Vector2(
+          renderPosition.x + tagOffset.x,
+          renderPosition.y + tagOffset.y + spacing * i,
+        );
 
-      c.strokeStyle = '#000'; // Colors.Black;
-      c.fillStyle = this.attributes.primaryColor; // Text color
-      c.lineWidth = 3;
-      c.strokeText(
-        this.name,
-        renderPosition.x + tagOffset.x,
-        renderPosition.y + tagOffset.y,
-      );
-      c.lineWidth = 1;
-      c.fillText(
-        this.name,
-        renderPosition.x + tagOffset.x,
-        renderPosition.y + tagOffset.y,
-      );
-
-      c.fillText(
-        `<TYPE> / ${Math.round(this.mass)}`,
-        indent.x + renderPosition.x + tagOffset.x,
-        renderPosition.y + tagOffset.y + indent.y,
-      );
-      c.fillText(
-        `(${Math.round(this.position.x)}, ${Math.round(this.position.y)})`,
-        indent.x + renderPosition.x + tagOffset.x,
-        renderPosition.y + tagOffset.y + indent.y * 2,
-      );
-
-      c.closePath();
+        Canvas.drawText(c, labels[i], position);
+      }
     };
 
     const drawTrail = () => {
@@ -139,7 +155,6 @@ export default class GravityObject extends Entity {
 
       const trailNodeRadius = 2;
 
-      // TODO: consider using gradients to ease transition
       c.strokeStyle = this.attributes.primaryColor;
       c.fillStyle = this.attributes.primaryColor;
       c.lineWidth = 1;
@@ -166,7 +181,7 @@ export default class GravityObject extends Entity {
         c.stroke();
         c.closePath();
 
-        if (GravitySimulation.settings.showTrailNodes) {
+        if (GravitySimulation.settings.gravityObject.showTrailNodes) {
           c.fillRect(
             trailPosition.x - trailNodeRadius * 0.5,
             trailPosition.y - trailNodeRadius * 0.5,
@@ -190,7 +205,7 @@ export default class GravityObject extends Entity {
     };
 
     const draw = () => {
-      if (GravitySimulation.settings.showTrails) drawTrail();
+      if (GravitySimulation.settings.gravityObject.showTrails) drawTrail();
       drawBody();
       drawText();
     };
@@ -241,7 +256,7 @@ export default class GravityObject extends Entity {
     //   ),
     // );
 
-    switch (GravitySimulation.settings.collisionMode) {
+    switch (GravitySimulation.settings.gravityObject.collisionMode) {
       case 'absorb':
         if (!this.attributes.fixed) {
           //&& this.type != negative_matter) {
@@ -312,15 +327,19 @@ export default class GravityObject extends Entity {
         break;
     }
 
+    this.createShockwave(object);
+  }
+
+  private createShockwave(object: GravityObject) {
     const kineticEnergy = (object.mass * object.velocity.magnitude() ** 2) / 2;
 
-    GravitySimulation.effects.add(
+    GravitySimulation.effectsController.effects.add(
       new Shockwave(
         10,
-        new Vector2(object.position.x, object.position.y),
-        new Vector2(this.velocity.x, this.velocity.y),
+        object.position.copy(),
+        this.velocity.copy(),
         // reboundVelocity.magnitude() * 10, // TODO: should this be based off of how fast the rebound is?
-        kineticEnergy * 0.1,
+        Math.max(kineticEnergy * 0.1, object.radius), // Should be no smaller than the radius
       ),
     );
   }

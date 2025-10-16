@@ -136,8 +136,8 @@ export default class PlayerController implements InputHandler {
         break;
 
       case this.controls.simulation.toggleTrails.key:
-        GravitySimulation.settings.showTrails =
-          !GravitySimulation.settings.showTrails;
+        GravitySimulation.settings.gravityObject.showTrails =
+          !GravitySimulation.settings.gravityObject.showTrails;
         break;
     }
 

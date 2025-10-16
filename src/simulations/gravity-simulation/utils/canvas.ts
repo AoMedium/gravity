@@ -35,4 +35,32 @@ export default class Canvas {
 
     return position;
   }
+
+  public static drawText(
+    c: CanvasRenderingContext2D,
+    text: CanvasText,
+    position: Vector2,
+  ) {
+    if (text.bold) {
+      c.fillStyle = text.fillColor || '#fff';
+      c.strokeStyle = text.strokeColor || '#000';
+
+      c.lineWidth = 3;
+
+      c.beginPath();
+      c.strokeText(text.value, position.x, position.y);
+      c.closePath();
+
+      c.lineWidth = 1;
+    }
+
+    c.fillText(text.value, position.x, position.y);
+  }
+}
+
+export class CanvasText {
+  value: string = '';
+  strokeColor?: string | CanvasGradient | CanvasPattern;
+  fillColor?: string | CanvasGradient | CanvasPattern;
+  bold?: boolean;
 }

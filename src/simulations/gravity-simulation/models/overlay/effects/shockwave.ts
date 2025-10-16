@@ -27,7 +27,7 @@ export default class Shockwave extends Effect {
 
   public update() {
     if (this.isFinished) {
-      GravitySimulation.effects.remove(this.id);
+      GravitySimulation.effectsController.effects.remove(this.id);
       return;
     }
 
