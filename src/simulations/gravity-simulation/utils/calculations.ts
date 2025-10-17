@@ -1,8 +1,8 @@
 import { G, NON_ZERO_FACTOR } from '../constants';
 import type GravityObject from '../models/entity/gravity-object';
-import type System from '../models/system/system';
+import type System from '../models/system';
 import Vector2 from '../models/vector2';
-import type { OrbitParams } from './orbit-params';
+import type { OrbitParams } from '../models/orbit-params';
 
 export default class Calculations {
   public static calculateAcceleration(

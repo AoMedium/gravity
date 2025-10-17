@@ -1,4 +1,4 @@
-import Action from '../../../utils/action';
+import Action from '../../system/action';
 
 export default class CameraActions {
   public static moveUp: Action = new Action('Move Up');

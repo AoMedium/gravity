@@ -1,4 +1,4 @@
-import type Action from '@/simulations/gravity-simulation/utils/action';
+import type Action from '@/simulations/gravity-simulation/system/action';
 
 export default interface InputHandler {
   keydown(key: string): void;

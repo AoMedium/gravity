@@ -1,7 +1,7 @@
-import Calculations from '../../utils/calculations';
-import type { OrbitParams } from '../../utils/orbit-params';
-import type SystemDTO from '../dto/system-dto';
-import type GravityObject from '../entity/gravity-object';
+import Calculations from '../utils/calculations';
+import type { OrbitParams } from '../models/orbit-params';
+import type SystemDTO from '../models/dto/system-dto';
+import type GravityObject from '../models/entity/gravity-object';
 
 export default class System {
   name: string;

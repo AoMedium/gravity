@@ -6,10 +6,10 @@ import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
 import Canvas from '../../utils/canvas';
 import GravityObject from '../../models/entity/gravity-object';
-import CameraActions from '../../models/system/actions/camera-actions';
-import SimulationActions from '../../models/system/actions/simulation-actions';
-import PlayerControls from '../../models/system/controls/player-controls';
-import type Action from '../../utils/action';
+import CameraActions from '../../system/actions/camera-actions';
+import SimulationActions from '../../system/actions/simulation-actions';
+import PlayerControls from '../../system/controls/player-controls';
+import type Action from '../../system/action';
 import type Camera from '../camera/camera';
 
 export default class PlayerController implements InputHandler {

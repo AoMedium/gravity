@@ -4,12 +4,12 @@ import { systems } from './data/systems';
 import Camera from './controllers/camera/camera';
 import CameraController from './controllers/camera/camera-controller';
 import PlayerController from './controllers/player/player-controller';
-import Settings from './models/system/settings';
 import EffectsController from './controllers/effects/effects-controller';
 import Canvas from './utils/canvas';
 import EntityController from './controllers/entity-controller/entity-controller';
-import SimulationActions from './models/system/actions/simulation-actions';
-import CameraActions from './models/system/actions/camera-actions';
+import SimulationActions from './system/actions/simulation-actions';
+import CameraActions from './system/actions/camera-actions';
+import Settings from './system/settings';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {

@@ -1,6 +1,6 @@
 import CameraActions from '../actions/camera-actions';
 import SimulationActions from '../actions/simulation-actions';
-import ControlMap from '../../../utils/control-map';
+import ControlMap from '../../system/control-map';
 
 export default class PlayerControls {
   public active: ControlMap = new ControlMap();

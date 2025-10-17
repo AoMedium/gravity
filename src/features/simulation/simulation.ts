@@ -1,6 +1,6 @@
 import EventBus from '@/features/events/event-bus';
 import type InputHandler from './util/input-handler';
-import type Action from '@/simulations/gravity-simulation/utils/action';
+import type Action from '@/simulations/gravity-simulation/system/action';
 
 // TODO: consider whether this should be a singleton
 export default abstract class Simulation {

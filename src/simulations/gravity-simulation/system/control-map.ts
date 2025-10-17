@@ -1,4 +1,4 @@
-import Action from '../utils/action';
+import Action from '../system/action';
 
 export default class ControlMap {
   private controls: Map<string, Action> = new Map();
