@@ -8,6 +8,8 @@ import Settings from './models/system/settings';
 import EffectsController from './controllers/effects/effects-controller';
 import Canvas from './utils/canvas';
 import EntityController from './controllers/entity-controller/entity-controller';
+import SimulationActions from './models/system/actions/simulation-actions';
+import CameraActions from './models/system/actions/camera-actions';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
@@ -55,9 +57,11 @@ export default class GravitySimulation extends Simulation {
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
-    Simulation.setControls(
-      GravitySimulation.playerController.controls.simulation.toggleTrails,
-      GravitySimulation.playerController.controls.simulation.togglePause,
+    Simulation.setActions(
+      SimulationActions.togglePause,
+      SimulationActions.toggleTrails,
+      CameraActions.toggleCursor,
+      CameraActions.toggleTargetCursor,
     );
 
     Simulation.isInitialized = true;

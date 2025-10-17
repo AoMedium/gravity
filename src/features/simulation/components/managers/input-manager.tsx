@@ -22,14 +22,14 @@ export default function InputManager() {
       <button onClick={() => dispatch(stop())}>Stop</button>
 
       {/* Changing controls will rerender the component */}
-      {Simulation.controls.map((control, index) => (
+      {Simulation.actions.map((action, index) => (
         <button
           key={index}
           onClick={() => {
-            Simulation.inputHandler.trigger(control);
+            Simulation.inputHandler.trigger(action);
           }}
         >
-          {control.functionality}
+          {action.name}
         </button>
       ))}
     </>

@@ -41,4 +41,12 @@ export default class CameraController extends CycleList<Camera> {
     camera.target = target;
     this.targetCursor.setTarget(target); // TODO: test if ref is cleared on delete
   }
+
+  public clearTarget() {
+    const camera = this.getActiveItem();
+    if (!camera) return;
+
+    camera.clearTarget();
+    this.targetCursor.clearTarget();
+  }
 }

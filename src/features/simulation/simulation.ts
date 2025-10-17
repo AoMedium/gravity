@@ -1,13 +1,13 @@
 import EventBus from '@/features/events/event-bus';
 import type InputHandler from './util/input-handler';
-import type Control from './util/control';
+import type Action from '@/simulations/gravity-simulation/utils/action';
 
 // TODO: consider whether this should be a singleton
 export default abstract class Simulation {
   public static context: CanvasRenderingContext2D | null;
   public static eventBus: EventBus = EventBus.getInstance();
   public static inputHandler: InputHandler;
-  public static controls: Control[] = [];
+  public static actions: Action[] = [];
 
   protected static isInitialized: boolean = false;
 
@@ -19,8 +19,8 @@ export default abstract class Simulation {
     this.fps = 60;
   }
 
-  public static setControls(...controls: Control[]) {
-    Simulation.controls.push(...controls);
+  public static setActions(...actions: Action[]) {
+    Simulation.actions.push(...actions);
   }
 
   public get window() {

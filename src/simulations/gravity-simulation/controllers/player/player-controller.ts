@@ -4,14 +4,16 @@ import type Entity from '../../models/entity/entity';
 import Vector2 from '../../models/vector2';
 import CycleList from '../../utils/cycle-list';
 import type CameraController from '../camera/camera-controller';
-import PlayerControls from './player-controls';
 import Canvas from '../../utils/canvas';
 import GravityObject from '../../models/entity/gravity-object';
-import type Control from '@/features/simulation/util/control';
+import CameraActions from '../../models/system/actions/camera-actions';
+import SimulationActions from '../../models/system/actions/simulation-actions';
+import PlayerControls from '../../models/system/controls/player-controls';
+import type Action from '../../utils/action';
+import type Camera from '../camera/camera';
 
 export default class PlayerController implements InputHandler {
-  public controls: PlayerControls = new PlayerControls();
-
+  private _controls: PlayerControls = new PlayerControls();
   private _cameraController: CameraController;
   private _moveStepSize: number = 1;
   private _scaleMultiplier: number = 1.1;
@@ -28,10 +30,11 @@ export default class PlayerController implements InputHandler {
 
   public keydown(key: string) {
     if (this._activeKeys.has(key)) {
+      // Do not process a key multiple times
       return;
-    } else {
-      this.lockKey(key);
     }
+
+    this.lockKey(key);
     this.handleSingleInput(key);
   }
 
@@ -39,8 +42,8 @@ export default class PlayerController implements InputHandler {
     this.unlockKey(key);
   }
 
-  public trigger(control: Control) {
-    this.handleSingleInput(control.key);
+  public trigger(action: Action) {
+    this.handleTrigger(action);
   }
 
   public mousedown(event: MouseEvent) {
@@ -64,11 +67,14 @@ export default class PlayerController implements InputHandler {
     if (!camera) return;
 
     for (const key of this._activeKeys) {
-      switch (key) {
-        case this.controls.camera.zoomIn.key:
+      const action = this._controls.active.get(key);
+      if (!action) continue;
+
+      switch (action.name) {
+        case CameraActions.zoomIn.name:
           camera.scale = camera.scale * this._scaleMultiplier;
           break;
-        case this.controls.camera.zoomOut.key:
+        case CameraActions.zoomOut.name:
           if (camera.scale / this._scaleMultiplier > 0.000001) {
             camera.scale = camera.scale / this._scaleMultiplier;
           }
@@ -76,23 +82,23 @@ export default class PlayerController implements InputHandler {
       }
 
       if (!this._isTargeting) {
-        switch (key) {
-          case this.controls.camera.moveDown.key:
+        switch (action.name) {
+          case CameraActions.moveDown.name:
             camera.velocity.add(
               new Vector2(0, -this._moveStepSize / camera.scale),
             );
             break;
-          case this.controls.camera.moveUp.key:
+          case CameraActions.moveUp.name:
             camera.velocity.add(
               new Vector2(0, this._moveStepSize / camera.scale),
             );
             break;
-          case this.controls.camera.moveLeft.key:
+          case CameraActions.moveLeft.name:
             camera.velocity.add(
               new Vector2(-this._moveStepSize / camera.scale, 0),
             );
             break;
-          case this.controls.camera.moveRight.key:
+          case CameraActions.moveRight.name:
             camera.velocity.add(
               new Vector2(this._moveStepSize / camera.scale, 0),
             );
@@ -103,56 +109,58 @@ export default class PlayerController implements InputHandler {
   }
 
   public handleSingleInput(key: string) {
-    // Lock and unlock key so that we do not process single inputs for a key multiple times
+    const action = this._controls.active.get(key);
+    if (!action) return;
 
+    this.handleTrigger(action);
+  }
+
+  public handleTrigger(action: Action) {
     const camera = this._cameraController.getActiveItem();
     if (!camera) return;
 
-    switch (key) {
-      case this.controls.camera.previousCamera.key:
+    switch (action.name) {
+      case CameraActions.previousCamera.name:
         this._cameraController.decrement();
         break;
 
-      case this.controls.camera.nextCamera.key:
+      case CameraActions.nextCamera.name:
         this._cameraController.increment();
         break;
 
-      case this.controls.camera.toggleSmoothMovement.key:
+      case CameraActions.toggleSmoothMovement.name:
         camera.toggleSmoothMovement();
         break;
-      case this.controls.camera.toggleTargeting.key:
-        this._isTargeting = !this._isTargeting;
-
-        if (this._isTargeting) {
-          const target = this._targets.getActiveItem();
-
-          if (!target) break;
-
-          this._cameraController.setTarget(target);
-        } else {
-          camera.clearTarget();
-          camera.velocity = Vector2.zero();
-        }
+      case CameraActions.toggleTargeting.name:
+        this.toggleTargeting(camera);
         break;
 
-      case this.controls.simulation.togglePause.key:
+      case SimulationActions.togglePause.name:
         GravitySimulation.togglePaused();
         break;
 
-      case this.controls.simulation.toggleTrails.key:
+      case SimulationActions.toggleTrails.name:
         GravitySimulation.settings.gravityObject.showTrails =
           !GravitySimulation.settings.gravityObject.showTrails;
+        break;
+      case CameraActions.toggleCursor.name:
+        GravitySimulation.settings.view.showCursor =
+          !GravitySimulation.settings.view.showCursor;
+        break;
+      case CameraActions.toggleTargetCursor.name:
+        GravitySimulation.settings.view.showTargetCursor =
+          !GravitySimulation.settings.view.showTargetCursor;
         break;
     }
 
     if (this._isTargeting) {
-      switch (key) {
-        case this.controls.camera.previousTarget.key:
+      switch (action.name) {
+        case CameraActions.previousTarget.name:
           this._targets.decrement();
           this._cameraController.setTarget(this._targets.getActiveItem());
           break;
 
-        case this.controls.camera.nextTarget.key:
+        case CameraActions.nextTarget.name:
           this._targets.increment();
           this._cameraController.setTarget(this._targets.getActiveItem());
           break;
@@ -166,5 +174,23 @@ export default class PlayerController implements InputHandler {
 
   private unlockKey(key: string) {
     this._activeKeys.delete(key);
+  }
+
+  private toggleTargeting(camera: Camera) {
+    this._isTargeting = !this._isTargeting;
+
+    if (this._isTargeting) {
+      this._controls.setMode('targeting');
+
+      const target = this._targets.getActiveItem();
+      if (!target) return;
+
+      this._cameraController.setTarget(target);
+    } else {
+      this._controls.setMode('default');
+
+      this._cameraController.clearTarget();
+      camera.velocity = Vector2.zero();
+    }
   }
 }
