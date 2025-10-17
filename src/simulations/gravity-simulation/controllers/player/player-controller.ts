@@ -124,7 +124,11 @@ export default class PlayerController implements InputHandler {
         this._isTargeting = !this._isTargeting;
 
         if (this._isTargeting) {
-          camera.target = this._targets.getActiveItem();
+          const target = this._targets.getActiveItem();
+
+          if (!target) break;
+
+          this._cameraController.setTarget(target);
         } else {
           camera.clearTarget();
           camera.velocity = Vector2.zero();
@@ -145,12 +149,12 @@ export default class PlayerController implements InputHandler {
       switch (key) {
         case this.controls.camera.previousTarget.key:
           this._targets.decrement();
-          camera.target = this._targets.getActiveItem();
+          this._cameraController.setTarget(this._targets.getActiveItem());
           break;
 
         case this.controls.camera.nextTarget.key:
           this._targets.increment();
-          camera.target = this._targets.getActiveItem();
+          this._cameraController.setTarget(this._targets.getActiveItem());
           break;
       }
     }

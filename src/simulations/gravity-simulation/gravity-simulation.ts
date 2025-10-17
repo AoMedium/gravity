@@ -8,6 +8,8 @@ import type Entity from './models/entity/entity';
 import Settings from './models/system/settings';
 import List from './utils/list';
 import EffectsController from './controllers/effects/effects-controller';
+import Cursor from './models/overlay/ui/cursors/cursor';
+import Vector2 from './models/vector2';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
@@ -111,6 +113,14 @@ export default class GravitySimulation extends Simulation {
     ) {
       GravitySimulation.effectsController.effects.getIndex(i).draw();
     }
+
+    Cursor.draw(
+      new Vector2(this.window.innerWidth / 2, this.window.innerHeight / 2),
+      10,
+      '#fff',
+    );
+
+    GravitySimulation.cameraController.targetCursor.draw();
   }
 
   private updateOutputs() {

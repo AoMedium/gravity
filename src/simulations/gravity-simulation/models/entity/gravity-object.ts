@@ -14,6 +14,9 @@ export default class GravityObject extends Entity {
 
   public radius: number = 0;
 
+  // TODO: plugin system
+  // TODO: inheritance for types
+
   private _previousPositions: Vector2[] = [];
   private _maxPosEntries: number = 20;
 
