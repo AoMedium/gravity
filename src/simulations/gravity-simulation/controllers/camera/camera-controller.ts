@@ -1,3 +1,4 @@
+import GravitySimulation from '../../gravity-simulation';
 import type Entity from '../../models/entity/entity';
 import Cursor from '../../models/overlay/ui/cursors/cursor';
 import TargetCursor from '../../models/overlay/ui/cursors/target-cursor';
@@ -24,9 +25,13 @@ export default class CameraController extends CycleList<Camera> {
     const camera = this.getActiveItem();
     if (!camera) return;
 
-    this.targetCursor.draw();
+    if (GravitySimulation.settings.view.showTargetCursor) {
+      this.targetCursor.draw();
+    }
 
-    Cursor.draw(new Vector2(innerWidth / 2, innerHeight / 2), 10, '#fff');
+    if (GravitySimulation.settings.view.showCursor) {
+      Cursor.draw(new Vector2(innerWidth / 2, innerHeight / 2), 10, '#fff');
+    }
   }
 
   public setTarget(target: Entity | undefined) {
