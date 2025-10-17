@@ -338,7 +338,10 @@ export default class GravityObject extends Entity {
   }
 
   private createShockwave(object: GravityObject) {
-    const kineticEnergy = (object.mass * object.velocity.magnitude() ** 2) / 2;
+    const kineticEnergy =
+      (object.mass *
+        (this.velocity.magnitude() + object.velocity.magnitude()) ** 2) /
+      2;
 
     GravitySimulation.effectsController.effects.add(
       new Shockwave(
