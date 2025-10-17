@@ -4,24 +4,21 @@ import { systems } from './data/systems';
 import Camera from './controllers/camera/camera';
 import CameraController from './controllers/camera/camera-controller';
 import PlayerController from './controllers/player/player-controller';
-import type Entity from './models/entity/entity';
 import Settings from './models/system/settings';
-import List from './utils/list';
 import EffectsController from './controllers/effects/effects-controller';
-import Cursor from './models/overlay/ui/cursors/cursor';
-import Vector2 from './models/vector2';
+import Canvas from './utils/canvas';
+import EntityController from './controllers/entity-controller/entity-controller';
 
 // TODO: change static to getters when migrated to singleton
 export default class GravitySimulation extends Simulation {
-  public static entities: List<Entity> = new List();
-
+  public static entityController: EntityController = new EntityController();
   public static effectsController: EffectsController = new EffectsController();
   public static cameraController: CameraController = new CameraController(
     new Camera(),
   );
   public static playerController: PlayerController = new PlayerController(
     GravitySimulation.cameraController,
-    GravitySimulation.entities.getRef(),
+    GravitySimulation.entityController.entities.getRef(),
   );
 
   public static settings: Settings = new Settings();
@@ -52,7 +49,9 @@ export default class GravitySimulation extends Simulation {
     );
 
     // Push items as we should only modify the original array and keep its reference
-    GravitySimulation.entities.getRef().push(...system.systemObjects);
+    GravitySimulation.entityController.entities
+      .getRef()
+      .push(...system.systemObjects);
 
     Simulation.eventBus.publish('updateSystem', system.name);
 
@@ -70,57 +69,23 @@ export default class GravitySimulation extends Simulation {
       this.physicsUpdate();
     }
 
-    const camera = GravitySimulation.cameraController.getActiveItem();
-    if (camera) {
-      camera.update();
-    }
-
+    GravitySimulation.cameraController.update();
     GravitySimulation.playerController.handleContinuousInput();
+
     this.updateOutputs();
   }
 
   private physicsUpdate() {
-    for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities.getIndex(i).update();
-    }
-
-    for (
-      let i = 0;
-      i < GravitySimulation.effectsController.effects.length;
-      i++
-    ) {
-      GravitySimulation.effectsController.effects.getIndex(i).update();
-    }
+    GravitySimulation.entityController.update();
+    GravitySimulation.effectsController.update();
   }
 
   public draw() {
-    if (!Simulation.context) return;
-    Simulation.context.clearRect(
-      0,
-      0,
-      this.window.innerWidth,
-      this.window.innerHeight,
-    );
+    if (Simulation.context) Canvas.clear(Simulation.context);
 
-    for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      GravitySimulation.entities.getIndex(i).draw();
-    }
-
-    for (
-      let i = 0;
-      i < GravitySimulation.effectsController.effects.length;
-      i++
-    ) {
-      GravitySimulation.effectsController.effects.getIndex(i).draw();
-    }
-
-    Cursor.draw(
-      new Vector2(this.window.innerWidth / 2, this.window.innerHeight / 2),
-      10,
-      '#fff',
-    );
-
-    GravitySimulation.cameraController.targetCursor.draw();
+    GravitySimulation.entityController.draw();
+    GravitySimulation.effectsController.draw();
+    GravitySimulation.cameraController.draw();
   }
 
   private updateOutputs() {

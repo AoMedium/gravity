@@ -36,6 +36,10 @@ export default class Canvas {
     return position;
   }
 
+  public static clear(c: CanvasRenderingContext2D) {
+    c.clearRect(0, 0, innerWidth, innerHeight); // TODO: innerWidth vs window.innerWidth
+  }
+
   public static drawText(
     c: CanvasRenderingContext2D,
     text: CanvasText,

@@ -227,8 +227,12 @@ export default class GravityObject extends Entity {
   }
 
   private compare() {
-    for (let i = 0; i < GravitySimulation.entities.length; i++) {
-      const object = GravitySimulation.entities.getIndex(i);
+    for (
+      let i = 0;
+      i < GravitySimulation.entityController.entities.length;
+      i++
+    ) {
+      const object = GravitySimulation.entityController.entities.getIndex(i);
 
       if (!(object instanceof GravityObject) || this.id == object.id) {
         continue;
@@ -292,7 +296,7 @@ export default class GravityObject extends Entity {
 
         //console.log("collide: " + this.id + " absorbs " + entities[i].id);
 
-        GravitySimulation.entities.remove(object.id);
+        GravitySimulation.entityController.entities.remove(object.id);
         break;
 
       case 'distributive':

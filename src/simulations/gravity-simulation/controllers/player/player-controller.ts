@@ -52,7 +52,7 @@ export default class PlayerController implements InputHandler {
       camera,
     );
 
-    GravitySimulation.entities.add(
+    GravitySimulation.entityController.entities.add(
       new GravityObject({ name: 'Roid', position: position, mass: 10 }),
     );
   }
