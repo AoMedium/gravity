@@ -1,0 +1,73 @@
+systemName: Sol Alpha;
+g: 0.0001;
+
+{
+	id: Sol Alpha;
+	mass: 59600000;
+
+	{
+		id: Kas;
+		mass: 55;
+	}
+	{
+		id: Ayca;
+		mass: 816;
+	}
+	{
+		id: Terra;
+		mass: 1000;
+
+		{
+			id: Muna;
+			mass: 12;
+		}
+	}
+	
+}
+{
+	id: Sol Beta;
+	mass: 14;
+}
+
+
+
+
+
+
+
+
+
+
+	{
+		id: Kas;
+		mass: 55;
+	}
+	{
+		id: Ayca;
+		mass: 816;
+	}
+	{
+		id: Terra;
+		mass: 1000;
+
+		{
+			id: Muna;
+			mass: 12;
+		}
+	}
+}
+
+
+
+
+systemName: Sol Alpha;
+g: 0.0001;
+
+##buildsystem##
+
+
+
+
+
+
+

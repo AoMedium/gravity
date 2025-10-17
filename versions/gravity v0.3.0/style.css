@@ -1,0 +1,92 @@
+body {
+	margin: 0 auto;
+	font-family: Quicksand;
+	cursor: url(cursor.cur), auto;
+
+	background-color: #fff;
+	user-select: none;
+}
+
+canvas {
+	z-index: -1;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+}
+
+.button {
+	z-index: 10;
+	display: block;
+	margin-bottom: 5px;
+	padding: 10px 15px;
+	opacity: 0.8;
+
+	background-color: #ddd;
+	border: 1.5px #ddd solid;
+
+	text-align: center;
+	font-size: 10px;
+	letter-spacing: 1.5px;
+	color: #000;
+
+	transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.button:hover {
+	background: #eee;
+	color: #0a0;
+	border-color: #0a0;
+	cursor: url(cursor.cur), auto;
+}
+.buttom:active {
+}
+
+#margin {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+
+	font-size: 15px;
+	color: #999;
+	letter-spacing: 1.5px;
+	font-variant-caps: all-small-caps;
+}
+
+#optionsContainer {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+
+#buttonContainer {
+	display: block;
+	width: 90px;
+
+	margin-left: auto;
+}
+#summonContainer {
+	display: block;
+}
+.summonContainerChild {
+	display: inline-block;
+	margin-bottom: 5px;
+}
+.inputBox {
+	margin-bottom: 5px;
+	width: 100px;
+	height: 20px;
+
+	background: #ddd;
+	padding: 2px 2px;
+	opacity: 0.8;
+
+	border: none;
+
+	text-align: center;
+	font-size: 10px;
+	letter-spacing: 1.5px;
+	color: #000;
+}
+.inputBox:focus {
+	outline: none;
+}
+
